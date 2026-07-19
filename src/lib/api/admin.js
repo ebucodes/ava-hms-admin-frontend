@@ -7,6 +7,7 @@ import {
   setToken,
   setTokenExpiry,
   setCompanySlug,
+  buildQueryString,
 } from "./client";
 
 function persistAdminSession(data) {
@@ -31,9 +32,10 @@ export function adminProfile() {
   return apiRequest("/api/v1/admin/auth/me", { token: getAdminToken() });
 }
 
-// Platform overview — every onboarded hospital (with facility + staff counts).
-export function adminListCompanies() {
-  return apiRequest("/api/v1/companies", { token: getAdminToken() });
+// Platform overview — a page of hospitals (+ counts) plus platform-wide summary.
+// Returns { items, pagination, summary }.
+export function adminListCompanies(params = {}) {
+  return apiRequest(`/api/v1/companies${buildQueryString(params)}`, { token: getAdminToken() });
 }
 
 // A single hospital (facilities + counts) for the detail view.

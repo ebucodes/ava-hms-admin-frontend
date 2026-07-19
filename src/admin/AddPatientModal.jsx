@@ -5,6 +5,7 @@ import { C } from '@/src/theme/tokens.js';
 import Modal from '@/src/components/ui/Modal.jsx';
 import { FormField, TextInput, SelectInput } from '@/src/components/ui/FormField.jsx';
 import { useToast } from '@/src/components/ui/Toast.jsx';
+import { useConfirm } from '@/src/components/ui/Confirm.jsx';
 import { registerPatient } from '@/src/lib/api/tenant.js';
 import { ApiError } from '@/src/lib/api/client.js';
 
@@ -13,6 +14,7 @@ const EMPTY = { first_name: '', last_name: '', gender: '', phone: '', email: '' 
 /** Register a patient for a hospital, via the active act-as session. */
 export default function AddPatientModal({ open, slug, onClose, onSaved }) {
   const { showToast } = useToast();
+  const confirm = useConfirm();
   const [form, setForm] = useState(EMPTY);
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
@@ -21,6 +23,12 @@ export default function AddPatientModal({ open, slug, onClose, onSaved }) {
 
   const submit = async (e) => {
     e.preventDefault();
+    const ok = await confirm({
+      title: 'Register patient?',
+      message: `Add ${form.first_name || 'this patient'} ${form.last_name || ''} to this hospital's records?`,
+      confirmLabel: 'Register',
+    });
+    if (!ok) return;
     setErrors({});
     setSaving(true);
     try {

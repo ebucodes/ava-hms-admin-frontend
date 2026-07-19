@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { C, FONT } from '@/src/theme/tokens.js';
 import { useToast } from '@/src/components/ui/Toast.jsx';
+import { useConfirm } from '@/src/components/ui/Confirm.jsx';
 import Card from '@/src/components/ui/Card.jsx';
 import Badge from '@/src/components/ui/Badge.jsx';
 import { FormField, TextInput } from '@/src/components/ui/FormField.jsx';
@@ -37,6 +38,7 @@ function statusBadge(status) {
  *  launch read-only operational views (via an act-as session). */
 export default function HospitalDetail({ slug, onBack, onChanged }) {
   const { showToast } = useToast();
+  const confirm = useConfirm();
   const [company, setCompany] = useState(null);
   const [error, setError] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
@@ -68,6 +70,12 @@ export default function HospitalDetail({ slug, onBack, onChanged }) {
 
   const saveProfile = async (e) => {
     e.preventDefault();
+    const ok = await confirm({
+      title: 'Save changes?',
+      message: `Update ${company.name}'s profile with these details?`,
+      confirmLabel: 'Save changes',
+    });
+    if (!ok) return;
     setSaving(true);
     try {
       await apply({ name: form.name.trim(), email: form.email.trim() || null, phone: form.phone.trim() || null });
@@ -79,6 +87,16 @@ export default function HospitalDetail({ slug, onBack, onChanged }) {
 
   const toggleStatus = async () => {
     const next = company.status === 'active' ? 'suspended' : 'active';
+    const suspending = next === 'suspended';
+    const ok = await confirm({
+      title: suspending ? 'Suspend hospital?' : 'Reactivate hospital?',
+      message: suspending
+        ? `Suspending ${company.name} will block its staff from signing in. You can reactivate it anytime.`
+        : `Reactivate ${company.name} and restore access for its staff?`,
+      confirmLabel: suspending ? 'Suspend' : 'Reactivate',
+      tone: suspending ? 'danger' : 'default',
+    });
+    if (!ok) return;
     setBusyStatus(true);
     try {
       await apply({ status: next });
@@ -107,7 +125,7 @@ export default function HospitalDetail({ slug, onBack, onChanged }) {
           <ArrowLeft size={15} /> Back to {company.name}
         </button>
         <div style={{ fontSize: 12.5, color: C.ink3 }}>
-          Viewing <strong style={{ color: C.ink }}>{company.name}</strong> · <code style={{ background: C.borderSoft, padding: '2px 6px', borderRadius: 6 }}>{company.slug}</code>
+          Viewing <strong style={{ color: C.ink }}>{company.name}</strong>
         </div>
         <HospitalOps slug={slug} op={op} />
       </div>

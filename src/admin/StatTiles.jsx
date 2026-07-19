@@ -4,15 +4,23 @@ import { Hospital, CheckCircle2, Network, Users } from 'lucide-react';
 import { C, FONT } from '@/src/theme/tokens.js';
 import Card from '@/src/components/ui/Card.jsx';
 
-/** Overview stat tiles — same template as the customer Dashboard tiles. */
-export default function StatTiles({ companies, loading, error }) {
+/** Overview stat tiles — same template as the customer Dashboard tiles. Prefers
+ *  the platform-wide `summary` (whole platform); falls back to the current page. */
+export default function StatTiles({ companies, summary, loading, error }) {
   const list = Array.isArray(companies) ? companies : [];
-  const tiles = [
-    ['Hospitals', list.length, C.blue, Hospital],
-    ['Active', list.filter((c) => c.status === 'active').length, C.emerald, CheckCircle2],
-    ['Facilities', list.reduce((n, c) => n + (c.facilities_count ?? 0), 0), C.violet, Network],
-    ['Staff', list.reduce((n, c) => n + (c.users_count ?? 0), 0), C.amber, Users],
-  ];
+  const tiles = summary
+    ? [
+        ['Hospitals', summary.hospitals, C.blue, Hospital],
+        ['Active', summary.active, C.emerald, CheckCircle2],
+        ['Facilities', summary.facilities, C.violet, Network],
+        ['Staff', summary.staff, C.amber, Users],
+      ]
+    : [
+        ['Hospitals', list.length, C.blue, Hospital],
+        ['Active', list.filter((c) => c.status === 'active').length, C.emerald, CheckCircle2],
+        ['Facilities', list.reduce((n, c) => n + (c.facilities_count ?? 0), 0), C.violet, Network],
+        ['Staff', list.reduce((n, c) => n + (c.users_count ?? 0), 0), C.amber, Users],
+      ];
 
   return (
     <div className="ava-grid-4" style={{ display: 'grid', gap: 14 }}>

@@ -1,6 +1,7 @@
 'use client';
 
 import { ToastProvider } from '@/src/components/ui/Toast.jsx';
+import { ConfirmProvider } from '@/src/components/ui/Confirm.jsx';
 import { AdminAuthProvider } from '@/src/lib/auth/AdminAuthContext.jsx';
 
 /**
@@ -12,7 +13,9 @@ import { AdminAuthProvider } from '@/src/lib/auth/AdminAuthContext.jsx';
 export default function Providers({ children }) {
   return (
     <ToastProvider>
-      <AdminAuthProvider>{children}</AdminAuthProvider>
+      <ConfirmProvider>
+        <AdminAuthProvider>{children}</AdminAuthProvider>
+      </ConfirmProvider>
     </ToastProvider>
   );
 }

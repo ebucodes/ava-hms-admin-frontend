@@ -10,6 +10,7 @@ import { STATUS_COLOR } from '@/src/admin/StatTiles.jsx';
 import { upper, titleCase } from '@/src/lib/format.js';
 import { ApiError } from '@/src/lib/api/client.js';
 import AddPatientModal from '@/src/admin/AddPatientModal.jsx';
+import Pagination from '@/src/components/ui/Pagination.jsx';
 import {
   listPatients, listStaff, listQueue, listOrders, listStock, listBills, listLabWorklist, listPayers,
 } from '@/src/lib/api/tenant.js';
@@ -49,18 +50,20 @@ const OPS = {
     title: 'Front-desk Queue', cols: ['Patient', 'Facility', 'Status'], fetch: listQueue,
     row: (q) => (
       <tr key={q.id} className="ava-row">
-        <td style={td}><div style={{ fontWeight: 700, color: C.ink }}>{patientName(q)}</div></td>
-        <td style={td}>{q.facility?.name || '—'}</td>
+        <td style={td}><div style={{ fontWeight: 700, color: C.ink }}>{q.encounter?.patient?.full_name || '—'}</div></td>
+        <td style={td}>{q.encounter?.facility?.name || '—'}</td>
         <td style={td}>{statusCell(q.status)}</td>
       </tr>
     ),
   },
   clinical: {
-    title: 'Clinical Orders', cols: ['Order', 'Patient', 'Status'], fetch: listOrders,
+    title: 'Clinical Orders', cols: ['Order', 'Type', 'Patient', 'Priority', 'Status'], fetch: listOrders,
     row: (o) => (
       <tr key={o.id} className="ava-row">
-        <td style={td}><div style={{ fontWeight: 700, color: C.ink }}>{o.name || o.order_type || o.type || o.test_name || '—'}</div></td>
+        <td style={td}><div style={{ fontWeight: 700, color: C.ink }}>{o.item || '—'}</div>{o.result_notes && <div style={{ fontSize: 11, color: C.ink3 }}>{o.result_notes}</div>}</td>
+        <td style={td}><Badge color={C.violet} bg={C.violet + '14'}>{upper(o.type)}</Badge></td>
         <td style={td}>{patientName(o)}</td>
+        <td style={td}>{o.priority ? `P${o.priority}` : '—'}</td>
         <td style={td}>{statusCell(o.status)}</td>
       </tr>
     ),
@@ -113,14 +116,18 @@ const OPS = {
 export default function HospitalOps({ slug, op }) {
   const cfg = OPS[op];
   const [rows, setRows] = useState(null);
+  const [meta, setMeta] = useState(null);
   const [errMsg, setErrMsg] = useState(null);
   const [adding, setAdding] = useState(false);
 
-  const reload = () => {
+  const reload = (page = 1) => {
     setRows(null);
     setErrMsg(null);
-    cfg.fetch(slug)
-      .then((data) => setRows(data?.items || (Array.isArray(data) ? data : [])))
+    cfg.fetch(slug, { page })
+      .then((data) => {
+        setRows(data?.items || (Array.isArray(data) ? data : []));
+        setMeta(data?.pagination || null);
+      })
       .catch((err) => {
         // A disabled module returns a friendly 403 message — surface it as-is.
         setErrMsg(err instanceof ApiError && err.status === 403 ? err.message : `Couldn't load this hospital's ${cfg.title.toLowerCase()}.`);
@@ -128,7 +135,7 @@ export default function HospitalOps({ slug, op }) {
   };
 
   useEffect(() => {
-    if (cfg) reload();
+    if (cfg) reload(1);
   }, [slug, op]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!cfg) return null;
@@ -159,6 +166,8 @@ export default function HospitalOps({ slug, op }) {
         {!loading && !errMsg && rows.length === 0 && <tr><td style={{ ...td, color: C.ink3 }} colSpan={n}>Nothing here yet.</td></tr>}
         {!loading && !errMsg && rows.map((r) => cfg.row(r))}
       </TableShell>
+
+      {!errMsg && <Pagination pagination={meta} onPage={reload} disabled={loading} />}
 
       {op === 'patients' && (
         <AddPatientModal

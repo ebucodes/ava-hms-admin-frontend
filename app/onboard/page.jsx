@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { C, FONT } from '@/src/theme/tokens.js';
 import { useToast } from '@/src/components/ui/Toast.jsx';
+import { useConfirm } from '@/src/components/ui/Confirm.jsx';
 import { useAdminAuth } from '@/src/lib/auth/AdminAuthContext.jsx';
 import { registerCompany } from '@/src/lib/api/companies.js';
 import { ApiError } from '@/src/lib/api/client.js';
@@ -59,6 +60,7 @@ function Field({ label, error, ...props }) {
 export default function AdminOnboardPage() {
   const router = useRouter();
   const { showToast } = useToast();
+  const confirm = useConfirm();
   const { loading, token } = useAdminAuth();
 
   const [mounted, setMounted] = useState(false);
@@ -83,6 +85,13 @@ export default function AdminOnboardPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const ok = await confirm({
+      title: 'Onboard hospital?',
+      message: `Create ${form.name || 'this hospital'} and its first administrator (${form.admin_email || 'admin'})?`,
+      confirmLabel: 'Onboard',
+      tone: 'warning',
+    });
+    if (!ok) return;
     setErrors({});
     setSubmitting(true);
     try {

@@ -31,16 +31,22 @@ export default function AdminShell() {
   const [palette, setPalette] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [companies, setCompanies] = useState(null);
+  const [meta, setMeta] = useState(null);
+  const [summary, setSummary] = useState(null);
   const [error, setError] = useState(false);
 
-  const load = useCallback(() => {
+  const load = useCallback((page = 1) => {
     setError(false);
-    adminListCompanies()
-      .then((res) => setCompanies(res.data || res || []))
+    adminListCompanies({ page })
+      .then((d) => {
+        setCompanies(d?.items || []);
+        setMeta(d?.pagination || null);
+        setSummary(d?.summary || null);
+      })
       .catch(() => setError(true));
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => { load(1); }, [load]);
 
   useEffect(() => {
     const h = (e) => {
@@ -84,9 +90,9 @@ export default function AdminShell() {
             {selected ? (
               <HospitalDetail slug={selected} onBack={() => setSelected(null)} onChanged={load} />
             ) : active === 'overview' ? (
-              <Overview admin={admin} companies={companies} loading={loading} error={error} onOpen={setSelected} onSeeAll={() => setActive('hospitals')} />
+              <Overview admin={admin} companies={companies} summary={summary} loading={loading} error={error} onOpen={setSelected} onSeeAll={() => setActive('hospitals')} />
             ) : (
-              <HospitalsView companies={companies} loading={loading} error={error} onOpen={setSelected} onRetry={load} />
+              <HospitalsView companies={companies} summary={summary} meta={meta} loading={loading} error={error} onOpen={setSelected} onRetry={load} onPage={load} />
             )}
           </main>
         </div>

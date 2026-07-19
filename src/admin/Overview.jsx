@@ -8,7 +8,7 @@ import StatTiles, { STATUS_COLOR } from '@/src/admin/StatTiles.jsx';
 import { upper } from '@/src/lib/format.js';
 
 /** Landing view: greeting hero, stat tiles, and a recent-hospitals list. */
-export default function Overview({ admin, companies, loading, error, onOpen, onSeeAll }) {
+export default function Overview({ admin, companies, summary, loading, error, onOpen, onSeeAll }) {
   const list = Array.isArray(companies) ? companies : [];
   const recent = list.slice(0, 5);
 
@@ -23,7 +23,7 @@ export default function Overview({ admin, companies, loading, error, onOpen, onS
         <p style={{ fontSize: 14, color: 'rgba(255,255,255,.72)', margin: 0 }}>Operations across every hospital on the platform.</p>
       </div>
 
-      <StatTiles companies={companies} loading={loading} error={error} />
+      <StatTiles companies={companies} summary={summary} loading={loading} error={error} />
 
       <Card pad={0}>
         <div style={{ padding: '15px 18px', borderBottom: `1px solid ${C.borderSoft}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
