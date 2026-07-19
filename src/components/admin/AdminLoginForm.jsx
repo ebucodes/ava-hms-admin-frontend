@@ -6,7 +6,7 @@ import { Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { C, FONT } from '@/src/theme/tokens.js';
 import { useToast } from '@/src/components/ui/Toast.jsx';
-import { adminLogin } from '@/src/lib/api/admin.js';
+import { useAdminAuth } from '@/src/lib/auth/AdminAuthContext.jsx';
 import { ApiError } from '@/src/lib/api/client.js';
 
 const inputStyle = {
@@ -79,6 +79,7 @@ function Field({ label, type = 'text', ...props }) {
 export default function AdminLoginForm() {
   const router = useRouter();
   const { showToast } = useToast();
+  const { login } = useAdminAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -93,7 +94,7 @@ export default function AdminLoginForm() {
 
     setSubmitting(true);
     try {
-      await adminLogin(email.trim(), password);
+      await login(email.trim(), password);
       showToast('Welcome back!', 'success', 2000);
       router.replace('/');
     } catch (err) {

@@ -4,6 +4,9 @@ import {
   setAdminToken,
   setAdminExpiry,
   clearAdminAuth,
+  setToken,
+  setTokenExpiry,
+  setCompanySlug,
 } from "./client";
 
 function persistAdminSession(data) {
@@ -26,6 +29,41 @@ export async function adminLogin(email, password) {
 
 export function adminProfile() {
   return apiRequest("/api/v1/admin/auth/me", { token: getAdminToken() });
+}
+
+// Platform overview — every onboarded hospital (with facility + staff counts).
+export function adminListCompanies() {
+  return apiRequest("/api/v1/companies", { token: getAdminToken() });
+}
+
+// A single hospital (facilities + counts) for the detail view.
+export function adminGetCompany(slug) {
+  return apiRequest(`/api/v1/companies/${slug}`, { token: getAdminToken() });
+}
+
+// Update a hospital's core profile (name / email / phone / status).
+export function adminUpdateCompany(slug, payload) {
+  return apiRequest(`/api/v1/companies/${slug}`, {
+    method: "POST",
+    body: payload,
+    token: getAdminToken(),
+  });
+}
+
+// Start an "act-as" session for a hospital: mints a TENANT token so the console
+// can read that hospital's phase 2–6 data. Stores the token + slug locally so
+// tenantRequest() (see lib/api/tenant.js) picks it up automatically.
+export async function actAs(slug) {
+  const data = await apiRequest(`/api/v1/companies/${slug}/act-as`, {
+    method: "POST",
+    token: getAdminToken(),
+  });
+  if (data?.access_token) {
+    setToken(data.access_token);
+    setTokenExpiry(Date.now() + (data.expires_in || 3600) * 1000);
+    setCompanySlug(data.company?.slug || slug);
+  }
+  return data;
 }
 
 export async function adminRefresh() {
