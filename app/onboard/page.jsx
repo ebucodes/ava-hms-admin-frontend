@@ -112,7 +112,7 @@ export default function AdminOnboardPage() {
     <div style={{ minHeight: '100vh', background: `linear-gradient(180deg, ${C.bg}, ${C.bgGrad})`, padding: '32px 20px' }}>
       <div style={{ maxWidth: 620, margin: '0 auto' }}>
         <Link
-          href="/admin"
+          href="/"
           style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: C.ink3, textDecoration: 'none', marginBottom: 18 }}
         >
           <ArrowLeft size={15} /> Back to admin
@@ -148,7 +148,7 @@ export default function AdminOnboardPage() {
                   Onboard another
                 </button>
                 <Link
-                  href="/admin"
+                  href="/"
                   style={{ padding: '9px 15px', borderRadius: 10, border: `1px solid ${C.border}`, background: '#fff', color: C.ink, fontSize: 13, fontWeight: 600, textDecoration: 'none' }}
                 >
                   Done

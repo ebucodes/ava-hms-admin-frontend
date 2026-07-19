@@ -8,7 +8,3 @@ export function registerCompany(payload) {
     token: getAdminToken(),
   });
 }
-
-export function getTenant(slug) {
-  return apiRequest(`/api/v1/${slug}`, { auth: false });
-}

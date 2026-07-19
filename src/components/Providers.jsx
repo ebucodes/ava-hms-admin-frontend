@@ -1,11 +1,18 @@
 'use client';
 
 import { ToastProvider } from '@/src/components/ui/Toast.jsx';
+import { AdminAuthProvider } from '@/src/lib/auth/AdminAuthContext.jsx';
 
 /**
  * Client-only providers, split out so the root layout can stay a server
- * component (and thus export metadata / page titles).
+ * component (and thus export metadata / page titles). The admin console has a
+ * single global auth provider — every page under the root domain is behind the
+ * system-admin session.
  */
 export default function Providers({ children }) {
-  return <ToastProvider>{children}</ToastProvider>;
+  return (
+    <ToastProvider>
+      <AdminAuthProvider>{children}</AdminAuthProvider>
+    </ToastProvider>
+  );
 }

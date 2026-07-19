@@ -72,8 +72,8 @@ function Field({ label, type = 'text', ...props }) {
 }
 
 /**
- * System-admin (application owner) sign-in. Used by both /login and
- * /admin/login. On success, stores the admin session and enters /admin.
+ * System-admin (application owner) sign-in at /login. On success, stores the
+ * admin session and enters the console root (/).
  */
 export default function AdminLoginForm() {
   const router = useRouter();
@@ -94,7 +94,7 @@ export default function AdminLoginForm() {
     try {
       await adminLogin(email.trim(), password);
       showToast('Welcome back!', 'success', 2000);
-      router.replace('/admin');
+      router.replace('/');
     } catch (err) {
       const message =
         err instanceof ApiError ? err.message : 'Unable to reach the server. Please try again.';

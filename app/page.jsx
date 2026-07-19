@@ -1,61 +1,77 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Building2, LogOut, ShieldCheck } from 'lucide-react';
 import { C, FONT } from '@/src/theme/tokens.js';
-import { getCompanySlug } from '@/src/lib/api/client.js';
+import { useAdminAuth } from '@/src/lib/auth/AdminAuthContext.jsx';
 
 /**
- * Platform root. The app itself lives under /{company}. A returning tenant user
- * is redirected to their remembered hospital portal; otherwise we show a minimal
- * pointer (the system-admin login at /login lands in a later phase).
+ * Admin console root (admin.xyz.com/). The system-admin portal lives at the
+ * bare domain root — no /admin prefix. Unauthenticated visitors are sent to
+ * /login.
  */
-export default function RootPage() {
+export default function AdminPortalPage() {
   const router = useRouter();
-  const [checked, setChecked] = useState(false);
+  const { loading, token, admin, logout } = useAdminAuth();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const slug = getCompanySlug();
-    if (slug) {
-      router.replace(`/${slug}`);
-    } else {
-      setChecked(true);
-    }
-  }, [router]);
+    setMounted(true);
+  }, []);
 
-  if (!checked) return null;
+  useEffect(() => {
+    if (mounted && !loading && !token) {
+      router.replace('/login');
+    }
+  }, [mounted, loading, token, router]);
+
+  if (!mounted || loading || !token) return null;
+
+  const handleLogout = async () => {
+    await logout();
+    router.replace('/login');
+  };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-        background: `linear-gradient(135deg, ${C.blue}20, ${C.violet}20)`,
-        padding: 20,
-        textAlign: 'center',
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 440,
-          background: '#fff',
-          borderRadius: 20,
-          padding: 40,
-          boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
-        }}
-      >
-        <h1 style={{ fontFamily: FONT.display, fontSize: 22, fontWeight: 800, color: C.ink, margin: 0 }}>
-          AVA HMS
-        </h1>
-        <p style={{ fontSize: 14, color: C.ink3, lineHeight: 1.6, margin: '12px 0 0' }}>
-          Access your hospital portal at{' '}
-          <code style={{ color: C.ink, background: C.borderSoft, padding: '2px 6px', borderRadius: 6 }}>
-            /your-hospital-id
-          </code>
-          . System-administrator sign-in is coming soon.
-        </p>
+    <div style={{ minHeight: '100vh', background: `linear-gradient(180deg, ${C.bg}, ${C.bgGrad})`, padding: '32px 20px' }}>
+      <div style={{ maxWidth: 960, margin: '0 auto' }}>
+        <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 28 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ width: 44, height: 44, borderRadius: 12, background: `linear-gradient(135deg, ${C.ink}, ${C.violet})`, display: 'grid', placeItems: 'center', color: '#fff' }}>
+              <ShieldCheck size={22} />
+            </div>
+            <div>
+              <h1 style={{ fontFamily: FONT.display, fontSize: 20, fontWeight: 800, color: C.ink, margin: 0 }}>
+                System Administration
+              </h1>
+              <p style={{ fontSize: 13, color: C.ink3, margin: '2px 0 0' }}>
+                {admin?.name} · {admin?.role}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={handleLogout}
+            style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '9px 15px', borderRadius: 10, border: `1px solid ${C.border}`, background: '#fff', color: C.ink, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+          >
+            <LogOut size={15} /> Sign out
+          </button>
+        </header>
+
+        <div className="ava-grid-2" style={{ display: 'grid', gap: 16, gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))' }}>
+          <Link href="/onboard" style={{ textDecoration: 'none' }}>
+            <div style={{ background: '#fff', border: `1px solid ${C.border}`, borderRadius: 16, padding: 24 }}>
+              <div style={{ width: 40, height: 40, borderRadius: 11, background: C.blueSoft, display: 'grid', placeItems: 'center', marginBottom: 14 }}>
+                <Building2 size={20} color={C.blue} />
+              </div>
+              <div style={{ fontFamily: FONT.display, fontSize: 16, fontWeight: 700, color: C.ink }}>Onboard a Hospital</div>
+              <p style={{ fontSize: 13, color: C.ink3, margin: '6px 0 0', lineHeight: 1.5 }}>
+                Create a new tenant hospital and its first administrator account.
+              </p>
+            </div>
+          </Link>
+        </div>
       </div>
     </div>
   );
