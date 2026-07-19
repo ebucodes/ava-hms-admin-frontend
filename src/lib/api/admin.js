@@ -44,3 +44,20 @@ export async function adminLogout() {
     clearAdminAuth();
   }
 }
+
+// Password reset (platform-level, no tenant). Both are unauthenticated.
+export function adminForgotPassword(email) {
+  return apiRequest("/api/v1/admin/auth/forgot-password", {
+    method: "POST",
+    body: { email },
+    auth: false,
+  });
+}
+
+export function adminResetPassword({ email, token, password, password_confirmation }) {
+  return apiRequest("/api/v1/admin/auth/reset-password", {
+    method: "POST",
+    body: { email, token, password, password_confirmation },
+    auth: false,
+  });
+}

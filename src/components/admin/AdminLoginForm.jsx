@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { C, FONT } from '@/src/theme/tokens.js';
@@ -183,6 +184,13 @@ export default function AdminLoginForm() {
           >
             {submitting ? 'Signing in…' : 'Sign In'}
           </button>
+
+          <Link
+            href="/auth/forgot-password"
+            style={{ fontSize: 13, color: C.ink3, textAlign: 'center', textDecoration: 'none' }}
+          >
+            Forgot your password?
+          </Link>
         </form>
       </div>
     </div>
