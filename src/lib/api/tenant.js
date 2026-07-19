@@ -10,6 +10,12 @@ export function listPatients(slug, params = {}) {
   return tenantRequest(slug, `/patients${buildQueryString({ per_page: 15, ...params })}`);
 }
 
+// Write — register a patient for the hospital (rides the act-as token, so the
+// audit trail attributes it to the system admin).
+export function registerPatient(slug, payload) {
+  return tenantRequest(slug, "/patients", { method: "POST", body: payload });
+}
+
 export function listStaff(slug, params = {}) {
   return tenantRequest(slug, `/users${buildQueryString({ per_page: 20, ...params })}`);
 }

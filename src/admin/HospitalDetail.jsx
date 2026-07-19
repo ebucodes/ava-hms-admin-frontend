@@ -161,7 +161,7 @@ export default function HospitalDetail({ slug, onBack, onChanged }) {
           {/* Operations CTAs */}
           <Card>
             <div style={{ fontFamily: FONT.display, fontSize: 14, fontWeight: 700, color: C.ink, marginBottom: 4 }}>Operations</div>
-            <div style={{ fontSize: 12, color: C.ink3, marginBottom: 14 }}>Open this hospital's records (read-only).</div>
+            <div style={{ fontSize: 12, color: C.ink3, marginBottom: 14 }}>Open this hospital's records — view and act on their behalf.</div>
             <div style={{ display: 'grid', gap: 10, gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))' }}>
               {CTAS.map((cta) => {
                 const soon = !cta.op;

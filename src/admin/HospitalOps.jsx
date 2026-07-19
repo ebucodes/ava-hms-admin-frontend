@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Plus } from 'lucide-react';
 import { C, FONT } from '@/src/theme/tokens.js';
 import { td } from '@/src/components/ui/styles.js';
 import TableShell from '@/src/components/data/TableShell.jsx';
@@ -8,6 +9,7 @@ import Badge from '@/src/components/ui/Badge.jsx';
 import { STATUS_COLOR } from '@/src/admin/StatTiles.jsx';
 import { upper, titleCase } from '@/src/lib/format.js';
 import { ApiError } from '@/src/lib/api/client.js';
+import AddPatientModal from '@/src/admin/AddPatientModal.jsx';
 import {
   listPatients, listStaff, listQueue, listOrders, listStock, listBills, listLabWorklist, listPayers,
 } from '@/src/lib/api/tenant.js';
@@ -22,7 +24,7 @@ const money = (v) => (v == null || v === '' ? '—' : `₦${Number(v).toLocaleSt
 /** Config per operation: fetcher, columns, and a defensive read-only row. */
 const OPS = {
   patients: {
-    title: 'Patients', cols: ['Patient', 'Contact', 'Gender', 'Status'], fetch: listPatients,
+    title: 'Patients', cols: ['Patient', 'Contact', 'Gender', 'Status'], fetch: listPatients, canAdd: true,
     row: (p) => (
       <tr key={p.id} className="ava-row">
         <td style={td}><div style={{ fontWeight: 700, color: C.ink }}>{p.full_name || p.name || '—'}</div><div style={{ fontSize: 11, color: C.ink3, fontFamily: FONT.mono }}>{p.patient_number || ''}</div></td>
@@ -106,14 +108,15 @@ const OPS = {
   },
 };
 
-/** Read-only viewer for a hospital's tenant data (via the act-as token). */
+/** Viewer for a hospital's tenant data (via the act-as token). Read-only, except
+ *  where an operation exposes a write action (e.g. Patients → Add patient). */
 export default function HospitalOps({ slug, op }) {
   const cfg = OPS[op];
   const [rows, setRows] = useState(null);
   const [errMsg, setErrMsg] = useState(null);
+  const [adding, setAdding] = useState(false);
 
-  useEffect(() => {
-    if (!cfg) return;
+  const reload = () => {
     setRows(null);
     setErrMsg(null);
     cfg.fetch(slug)
@@ -122,23 +125,49 @@ export default function HospitalOps({ slug, op }) {
         // A disabled module returns a friendly 403 message — surface it as-is.
         setErrMsg(err instanceof ApiError && err.status === 403 ? err.message : `Couldn't load this hospital's ${cfg.title.toLowerCase()}.`);
       });
+  };
+
+  useEffect(() => {
+    if (cfg) reload();
   }, [slug, op]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!cfg) return null;
   const loading = rows === null && !errMsg;
   const n = cfg.cols.length;
 
-  return (
-    <TableShell
-      title={cfg.title}
-      sub="Read-only · via act-as session"
-      cols={cfg.cols}
-      right={<span style={{ fontSize: 11.5, color: C.ink3, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Read only</span>}
+  const right = cfg.canAdd ? (
+    <button
+      onClick={() => setAdding(true)}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 12px', borderRadius: 9, border: 'none', background: `linear-gradient(135deg, ${C.blue}, ${C.violet})`, color: '#fff', fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}
     >
-      {loading && <tr><td style={{ ...td, color: C.ink3 }} colSpan={n}>Loading…</td></tr>}
-      {errMsg && <tr><td style={{ ...td, color: C.ink2 }} colSpan={n}>{errMsg}</td></tr>}
-      {!loading && !errMsg && rows.length === 0 && <tr><td style={{ ...td, color: C.ink3 }} colSpan={n}>Nothing here yet.</td></tr>}
-      {!loading && !errMsg && rows.map((r) => cfg.row(r))}
-    </TableShell>
+      <Plus size={14} /> Add patient
+    </button>
+  ) : (
+    <span style={{ fontSize: 11.5, color: C.ink3, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>Read only</span>
+  );
+
+  return (
+    <>
+      <TableShell
+        title={cfg.title}
+        sub={cfg.canAdd ? 'Via act-as session' : 'Read-only · via act-as session'}
+        cols={cfg.cols}
+        right={right}
+      >
+        {loading && <tr><td style={{ ...td, color: C.ink3 }} colSpan={n}>Loading…</td></tr>}
+        {errMsg && <tr><td style={{ ...td, color: C.ink2 }} colSpan={n}>{errMsg}</td></tr>}
+        {!loading && !errMsg && rows.length === 0 && <tr><td style={{ ...td, color: C.ink3 }} colSpan={n}>Nothing here yet.</td></tr>}
+        {!loading && !errMsg && rows.map((r) => cfg.row(r))}
+      </TableShell>
+
+      {op === 'patients' && (
+        <AddPatientModal
+          open={adding}
+          slug={slug}
+          onClose={() => setAdding(false)}
+          onSaved={() => { setAdding(false); reload(); }}
+        />
+      )}
+    </>
   );
 }
