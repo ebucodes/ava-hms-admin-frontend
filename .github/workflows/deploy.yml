@@ -1,0 +1,69 @@
+name: AVA HMS Admin Frontend — deploy to cPanel shared hosting
+
+# ─────────────────────────────────────────────────────────────────────────────
+# AVA HMS Admin Frontend (Next.js) — deploy to cPanel shared hosting (main branch only).
+#
+# This pipeline:
+#   1. Installs Node deps        (npm ci)
+#   2. Builds a STATIC export    (next build → ./out, because next.config.js
+#                                 sets output: "export")
+#   3. FTP-syncs ONLY ./out to the cPanel docroot
+#
+# There is NO Node runtime on the server — the site is plain static files.
+#
+# Env / config:
+#   • NEXT_PUBLIC_API_BASE_URL is inlined at BUILD time (Next.js bakes
+#     NEXT_PUBLIC_* into the bundle). It is read here from a GitHub Actions
+#     Variable, and falls back to the staging backend URL if the Variable
+#     is not set. It is NOT read on the server.
+#   • FTP credentials come from the "production" GitHub Environment secrets,
+#     identical to the backend pipeline.
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  NODE_VERSION: "22" # current LTS; matches the version the build is verified against
+  NEXT_PUBLIC_API_BASE_URL: ${{ vars.NEXT_PUBLIC_API_BASE_URL || 'https://staging-app.ava-health.org' }}
+
+jobs:
+  deploy:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+    environment: main # main only → the "production" GitHub Environment
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build static export
+        run: npm run build # next build → ./out (output: "export")
+
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT }}
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
+          # Local = the static build output ONLY. Do NOT upload the repo root.
+          local-dir: ./out/
+          # Target folder ON THE SERVER.
+          server-dir: /staging-admin.ava-health.org/
+          # Never touch server-only files or the deploy sync state.
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.ftp-deploy-sync-state.json

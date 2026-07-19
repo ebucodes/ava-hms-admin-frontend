@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.ava-root {
+  font-family: 'Hanken Grotesk', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.ava-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.ava-scroll::-webkit-scrollbar-thumb {
+  border-radius: 99px;
+}
+
+.ava-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@keyframes avaRise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ava-rise {
+  animation: avaRise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes avaFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.ava-fade {
+  animation: avaFade 0.18s ease both;
+}
+
+@keyframes avaPop {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.ava-pop {
+  animation: avaPop 0.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes avaSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.ava-spin {
+  animation: avaSpin 1s linear infinite;
+}
+
+@keyframes avaPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.ava-pulse {
+  animation: avaPulse 2s ease-in-out infinite;
+}
+
+@keyframes avaCaret {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.ava-caret {
+  animation: avaCaret 1.1s step-end infinite;
+}
+
+.ava-bed {
+  transition: transform 0.12s;
+  cursor: pointer;
+}
+
+.ava-bed:hover {
+  transform: scale(1.35);
+  z-index: 2;
+}

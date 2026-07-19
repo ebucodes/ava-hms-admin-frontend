@@ -1,0 +1,26 @@
+{
+  "name": "ava-hms",
+  "private": true,
+  "version": "0.1.0",
+  "description": "AVA HMS — AI-powered Hospital Management System frontend prototype",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "lucide-react": "^0.395.0",
+    "next": "^16.2.10",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "recharts": "^2.12.7"
+  },
+  "devDependencies": {
+    "eslint": "^8.50.0",
+    "eslint-config-next": "^15.5.20"
+  },
+  "overrides": {
+    "postcss": "^8.5.10"
+  }
+}
