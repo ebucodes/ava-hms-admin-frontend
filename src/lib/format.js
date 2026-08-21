@@ -110,3 +110,49 @@ export function age(v) {
 
   return years >= 0 ? `${years}y` : "—";
 }
+
+/**
+ * Time-of-day greeting: "Good morning" / "Good afternoon" / "Good evening".
+ *
+ * Boundaries are local to the viewer, which is what you want in a hospital — a night
+ * shift reading "Good morning" at 2am would be wrong for the person actually on duty.
+ */
+export function greeting(v = new Date()) {
+  const d = v instanceof Date ? v : new Date(v);
+  const hour = Number.isNaN(d.getTime()) ? new Date().getHours() : d.getHours();
+
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+}
+
+/** The part of a name to greet someone by: "Ada Adeyemi" → "Ada". */
+export function firstName(name) {
+  if (!name) return "there";
+  return String(name).trim().split(/\s+/)[0];
+}
+
+/**
+ * A waiting duration in seconds → "4m", "1h 12m". Under a minute reads "just now".
+ *
+ * Separate from timeAgo(): that answers "when did this happen" against the clock, this
+ * answers "how long has this person been standing there" from a server-computed figure.
+ * The server sends seconds precisely so this stays live rather than freezing at the
+ * moment the payload was built.
+ */
+export function duration(seconds) {
+  // Guard null/undefined/"" explicitly: Number(null) is 0, which would render a MISSING
+  // wait as "just now" — a real-looking figure for data we do not have.
+  if (seconds == null || seconds === "") return "—";
+
+  const s = Number(seconds);
+  if (!Number.isFinite(s) || s < 0) return "—";
+  if (s < 60) return "just now";
+
+  const mins = Math.floor(s / 60);
+  if (mins < 60) return `${mins}m`;
+
+  const hours = Math.floor(mins / 60);
+  const rest = mins % 60;
+  return rest ? `${hours}h ${rest}m` : `${hours}h`;
+}

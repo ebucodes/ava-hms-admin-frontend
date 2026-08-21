@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Search, ChevronDown, Wifi, WifiOff, RefreshCw, Menu } from "lucide-react";
 import { C, FONT } from "../../theme/tokens.js";
-import { timeWithSeconds } from "../../lib/format.js";
+import { timeWithSeconds, greeting, firstName } from "../../lib/format.js";
 import { iconBtn } from "../ui/styles.js";
 
 function initials(name) {
@@ -43,9 +43,16 @@ function TopBar({ onPalette, onMenuClick, title, sub, user, onLogout }) {
         <Menu size={18} color={C.ink2} />
       </button>
 
+      {/* Same greeting-first layout as the tenant portal, so the two consoles read the
+          same way. The page name moves to the second line. */}
       <div style={{ minWidth: 0, overflow: "hidden", flex: "1 1 auto" }}>
-        <div style={{ fontFamily: FONT.display, fontSize: 17, fontWeight: 700, color: C.ink, letterSpacing: "-.02em", lineHeight: 1.1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{title}</div>
-        <div style={{ fontSize: 11.5, color: C.ink3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{sub}</div>
+        <div style={{ fontFamily: FONT.display, fontSize: 17, fontWeight: 700, color: C.ink, letterSpacing: "-.02em", lineHeight: 1.1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          {greeting()}, {firstName(user?.name)}
+        </div>
+        <div style={{ fontSize: 11.5, color: C.ink3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          {title}
+          {sub ? <span style={{ color: C.ink4 }}> · {sub}</span> : null}
+        </div>
       </div>
 
       {/* search */}
