@@ -6,7 +6,7 @@ import { C, FONT } from '@/src/theme/tokens.js';
 import { td } from '@/src/components/ui/styles.js';
 import TableShell from '@/src/components/data/TableShell.jsx';
 import Badge from '@/src/components/ui/Badge.jsx';
-import { upper, titleCase, money } from '@/src/lib/format.js';
+import { upper, titleCase, money, dateTime } from '@/src/lib/format.js';
 import StatusPill from '@/src/components/ui/StatusPill.jsx';
 import { ApiError } from '@/src/lib/api/client.js';
 import AddPatientModal from '@/src/admin/AddPatientModal.jsx';
@@ -176,7 +176,7 @@ const OPS = {
         <td style={td}>{n.facility?.name || '—'}</td>
         <td style={td}>{statusCell(n.status)}{n.status === 'active' && <span style={{ fontSize: 11, color: n.online ? C.emerald : C.amber, marginLeft: 6, fontWeight: 700 }}>{n.online ? 'online' : 'offline'}</span>}</td>
         <td style={td}>{n.backlog ?? 0}</td>
-        <td style={td}>{n.last_seen_at ? new Date(n.last_seen_at).toLocaleString() : '—'}</td>
+        <td style={td}>{dateTime(n.last_seen_at)}</td>
       </tr>
     ),
   },
@@ -199,7 +199,7 @@ const OPS = {
     filters: [{ key: 'platform_only', label: 'Platform actions only', type: 'toggle' }],
     row: (l) => (
       <tr key={l.id} className="ava-row">
-        <td style={td}><span style={{ fontFamily: FONT.mono, fontSize: 12 }}>{l.created_at ? new Date(l.created_at).toLocaleString() : '—'}</span></td>
+        <td style={td}><span style={{ fontFamily: FONT.mono, fontSize: 12 }}>{dateTime(l.created_at)}</span></td>
         <td style={td}><Badge color={C.violet} bg={C.violet + '14'}>{upper(l.action)}</Badge></td>
         <td style={td}>
           <div style={{ fontWeight: 700, color: C.ink }}>{l.actor?.name || 'System'}</div>
@@ -346,7 +346,7 @@ const OPS = {
         </td>
         <td style={td}>{patientName(s)}</td>
         <td style={td}>{titleCase(s.specimen_type) || '—'}</td>
-        <td style={td}>{s.collected_at ? new Date(s.collected_at).toLocaleString() : '—'}</td>
+        <td style={td}>{dateTime(s.collected_at)}</td>
         <td style={td}>{statusCell(s.status)}</td>
       </tr>
     ),
@@ -378,7 +378,7 @@ const OPS = {
         </td>
         <td style={td}>{p.prescriber?.name || '—'}</td>
         <td style={td}>{Array.isArray(p.items) ? p.items.length : '—'}</td>
-        <td style={td}>{p.created_at ? new Date(p.created_at).toLocaleString() : '—'}</td>
+        <td style={td}>{dateTime(p.created_at)}</td>
         <td style={td}>{statusCell(p.status)}</td>
       </tr>
     ),
@@ -394,7 +394,7 @@ const OPS = {
           {b.room_number && <div style={{ fontSize: 11, color: C.ink3 }}>Room {b.room_number}</div>}
         </td>
         <td style={td}>{b.ward?.name || '—'}</td>
-        <td style={td}>{b.status_changed_at ? new Date(b.status_changed_at).toLocaleString() : '—'}</td>
+        <td style={td}>{dateTime(b.status_changed_at)}</td>
         <td style={td}>
           {b.turnover_minutes != null
             ? <span style={{ fontWeight: 700, color: C.amber }}>{b.turnover_minutes} min</span>
@@ -409,7 +409,7 @@ const OPS = {
     row: (d) => (
       <tr key={d.id} className="ava-row">
         <td style={td}><div style={{ fontWeight: 700, color: C.ink }}>{d.order?.drug_name || '—'}</div></td>
-        <td style={td}>{d.scheduled_at ? new Date(d.scheduled_at).toLocaleString() : '—'}</td>
+        <td style={td}>{dateTime(d.scheduled_at)}</td>
         <td style={td}>
           {d.overdue_minutes != null
             ? <span style={{ fontWeight: 700, color: C.red }}>{d.overdue_minutes} min</span>
@@ -452,7 +452,7 @@ const OPS = {
         <td style={td}>{a.patient?.full_name || '—'}</td>
         <td style={td}>{titleCase(a.match_reason) || '—'}</td>
         <td style={td}>{a.merged_by?.name || '—'}</td>
-        <td style={td}>{a.created_at ? new Date(a.created_at).toLocaleString() : '—'}</td>
+        <td style={td}>{dateTime(a.created_at)}</td>
       </tr>
     ),
   },
@@ -492,7 +492,7 @@ const OPS = {
           {t.redeemed_amount != null && <div style={{ fontSize: 11, color: C.ink3 }}>redeemed {money(t.redeemed_amount)}</div>}
         </td>
         <td style={td}>
-          {t.expires_at ? new Date(t.expires_at).toLocaleString() : '—'}
+          {dateTime(t.expires_at)}
           {/* is_expired is DERIVED server-side from expires_at — there is no `expired`
               status case, so the pill alone would read `active` past expiry. */}
           {t.is_expired && <div style={{ fontSize: 11, color: C.red, fontWeight: 700 }}>expired</div>}

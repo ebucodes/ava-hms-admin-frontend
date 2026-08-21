@@ -1,17 +1,19 @@
 import { useState } from "react";
-import { FlaskConical, ShieldCheck, Sparkles, Command, Plus, ArrowRight } from "lucide-react";
+import { Command, ArrowRight } from "lucide-react";
 import { C, FONT, shadow } from "../../theme/tokens.js";
 import { NAV } from "../../data/nav.js";
 
+/**
+ * Admin console launcher (⌘K). Navigation only.
+ *
+ * It previously also listed four tenant-side actions — Register New Patient, Create Lab
+ * Order, Submit HMO Claim, Ask AVA Intelligence — whose ids matched no admin view, so
+ * picking one silently dropped the user on the wrong page. The console has no such
+ * actions and no record search of its own; NAV is the whole of what it can route to.
+ */
 function CommandPalette({ open, onClose, go }) {
   const [q, setQ] = useState("");
-  const cmds = [
-    ...NAV.map((n) => ({ ...n, group: "Navigate" })),
-    { id: "newpatient", label: "Register New Patient", icon: Plus, group: "Actions" },
-    { id: "neworder", label: "Create Lab Order", icon: FlaskConical, group: "Actions" },
-    { id: "claim", label: "Submit HMO Claim", icon: ShieldCheck, group: "Actions" },
-    { id: "askai", label: "Ask AVA Intelligence…", icon: Sparkles, group: "AI" },
-  ];
+  const cmds = NAV.map((n) => ({ ...n, group: "Navigate" }));
   const filt = cmds.filter((c) => c.label.toLowerCase().includes(q.toLowerCase()));
   if (!open) return null;
   return (
@@ -24,7 +26,7 @@ function CommandPalette({ open, onClose, go }) {
           <kbd style={{ fontFamily: FONT.mono, fontSize: 11, color: C.ink3, border: `1px solid ${C.border}`, borderRadius: 6, padding: "2px 7px" }}>ESC</kbd>
         </div>
         <div style={{ maxHeight: 380, overflowY: "auto", padding: 8 }} className="ava-scroll">
-          {["AI", "Actions", "Navigate"].map((grp) => {
+          {["Navigate"].map((grp) => {
             const items = filt.filter((c) => c.group === grp);
             if (!items.length) return null;
             return (
@@ -33,8 +35,8 @@ function CommandPalette({ open, onClose, go }) {
                 {items.map((c) => (
                   <button key={c.id} onClick={() => { go(c.id); onClose(); }} className="ava-cmd"
                     style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", padding: "10px 12px", borderRadius: 10, border: "none", background: "transparent", cursor: "pointer", textAlign: "left" }}>
-                    <div style={{ width: 30, height: 30, borderRadius: 8, background: grp === "AI" ? C.violetSoft : C.surface2, display: "grid", placeItems: "center" }}>
-                      <c.icon size={15} color={grp === "AI" ? C.violet : C.ink2} />
+                    <div style={{ width: 30, height: 30, borderRadius: 8, background: C.surface2, display: "grid", placeItems: "center" }}>
+                      <c.icon size={15} color={C.ink2} />
                     </div>
                     <span style={{ fontSize: 13.5, fontWeight: 500, color: C.ink, flex: 1 }}>{c.label}</span>
                     <ArrowRight size={14} color={C.ink4} />

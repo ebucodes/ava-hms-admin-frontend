@@ -1,6 +1,7 @@
 'use client';
 
 import { ToastProvider } from '@/src/components/ui/Toast.jsx';
+import UpdateBanner from '@/src/components/ui/UpdateBanner.jsx';
 import { ConfirmProvider } from '@/src/components/ui/Confirm.jsx';
 import { AdminAuthProvider } from '@/src/lib/auth/AdminAuthContext.jsx';
 
@@ -15,6 +16,8 @@ export default function Providers({ children }) {
     <ToastProvider>
       <ConfirmProvider>
         <AdminAuthProvider>{children}</AdminAuthProvider>
+        {/* Mounted at the root so the "new version" notice shows on every page. */}
+        <UpdateBanner />
       </ConfirmProvider>
     </ToastProvider>
   );

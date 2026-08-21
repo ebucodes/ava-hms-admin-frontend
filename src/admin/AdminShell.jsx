@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { C } from '@/src/theme/tokens.js';
+import { NAV } from '@/src/data/nav.js';
 import { useAdminAuth } from '@/src/lib/auth/AdminAuthContext.jsx';
 import { adminListCompanies } from '@/src/lib/api/admin.js';
 import Sidebar from '@/src/components/shell/Sidebar.jsx';
@@ -57,7 +58,19 @@ export default function AdminShell() {
     return () => window.removeEventListener('keydown', h);
   }, []);
 
-  const go = (id) => { setSelected(null); setActive(id); setMobileNavOpen(false); };
+  // Guarded: an id outside the admin NAV used to fall through to the hospitals list,
+  // which reads as the palette taking you somewhere arbitrary. Refuse it instead.
+  const go = (id) => {
+    if (!NAV.some((n) => n.id === id)) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.error(`[AdminShell] Refusing to navigate to unknown view "${id}".`);
+      }
+      return;
+    }
+    setSelected(null);
+    setActive(id);
+    setMobileNavOpen(false);
+  };
   const handleLogout = async () => { await logout(); router.replace('/login'); };
 
   const loading = companies === null && !error;

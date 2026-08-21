@@ -6,7 +6,7 @@ import { C, FONT } from '@/src/theme/tokens.js';
 import Card from '@/src/components/ui/Card.jsx';
 import Badge from '@/src/components/ui/Badge.jsx';
 import { ApiError } from '@/src/lib/api/client.js';
-import { titleCase } from '@/src/lib/format.js';
+import { titleCase, date } from '@/src/lib/format.js';
 import { listMpiCandidates } from '@/src/lib/api/tenant.js';
 
 /**
@@ -62,7 +62,7 @@ export default function MpiCandidatesOps({ slug }) {
               </div>
               <div style={{ fontSize: 12, color: C.ink2, textAlign: 'right' }}>
                 <div>{p.phone || '—'}</div>
-                {p.date_of_birth && <div style={{ fontSize: 11, color: C.ink3 }}>{p.date_of_birth}</div>}
+                {p.date_of_birth && <div style={{ fontSize: 11, color: C.ink3 }}>{date(p.date_of_birth)}</div>}
               </div>
             </div>
           ))}

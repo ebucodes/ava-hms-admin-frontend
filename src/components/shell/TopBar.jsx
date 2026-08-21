@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Search, Sparkles, Bell, ChevronDown, Plus, Wifi, WifiOff, RefreshCw, Menu } from "lucide-react";
 import { C, FONT } from "../../theme/tokens.js";
+import { timeWithSeconds } from "../../lib/format.js";
 import { iconBtn } from "../ui/styles.js";
 
 function initials(name) {
@@ -14,7 +15,7 @@ function TopBar({ onPalette, onMenuClick, title, sub, user, onLogout }) {
   const [menuOpen, setMenuOpen] = useState(false);
   
   useEffect(() => {
-    const t = setInterval(() => setClock(new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" })), 1000);
+    const t = setInterval(() => setClock(timeWithSeconds(new Date())), 1000);
     return () => clearInterval(t);
   }, []);
   
@@ -76,8 +77,8 @@ function TopBar({ onPalette, onMenuClick, title, sub, user, onLogout }) {
       <div style={{ flex: 1 }} />
 
       {/* clock display */}
-      <div className="ava-topbar-clock" style={{ fontSize: 12.5, fontWeight: 600, color: C.ink2, minWidth: 85 }}>
-        {clock || "--:--:--"}
+      <div className="ava-topbar-clock" style={{ fontSize: 12.5, fontWeight: 600, color: C.ink2, minWidth: 96, whiteSpace: "nowrap" }}>
+        {clock || "—"}
       </div>
 
       {/* sync */}
