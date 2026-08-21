@@ -10,6 +10,9 @@ body { margin: 0; }
 .ava-scroll::-webkit-scrollbar-track { background: transparent; }
 @keyframes avaRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .ava-rise { animation: avaRise .5s cubic-bezier(.2,.7,.2,1) both; }
+/* Toasts sit at the TOP, so they enter from above. avaRise comes from below and
+   would read as the notice sliding up out of the header. */
+@keyframes avaDrop { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes avaFade { from { opacity: 0; } to { opacity: 1; } }
 .ava-fade { animation: avaFade .18s ease both; }
 @keyframes avaPop { from { opacity: 0; transform: scale(.97) translateY(-6px); } to { opacity: 1; transform: scale(1) translateY(0); } }

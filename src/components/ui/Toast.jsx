@@ -34,16 +34,30 @@ export function ToastProvider({ children }) {
   );
 }
 
+/**
+ * Toasts sit at the TOP, centred.
+ *
+ * Centred rather than top-right on purpose: the notification panel and the account menu
+ * both open from the top-right, and a toast landing there would cover the very panel that
+ * triggered it (marking notifications read, for instance). Centring also keeps them clear
+ * of the update banner, which is bottom-centred.
+ *
+ * `top: 76` clears the 64px sticky header, so a toast never hides the search bar or the
+ * bell while the user is still working with them.
+ */
 function ToastContainer({ toasts, onRemove }) {
   return (
     <div
       style={{
         position: 'fixed',
-        bottom: 20,
-        right: 20,
+        top: 76,
+        left: 0,
+        right: 0,
         display: 'flex',
         flexDirection: 'column',
+        alignItems: 'center',
         gap: 12,
+        padding: '0 16px',
         zIndex: 9999,
         pointerEvents: 'none',
       }}
@@ -101,15 +115,22 @@ function Toast({ id, message, type, onRemove }) {
         gap: 12,
         padding: '12px 16px',
         borderRadius: 10,
-        background: style.bg,
+        // The tint is ~7% alpha. At the bottom it floated over empty page margin; at the
+        // top it sits over tables and cards, so it needs an opaque base or the content
+        // beneath shows through the alert.
+        backgroundColor: C.surface,
+        backgroundImage: `linear-gradient(${style.bg}, ${style.bg})`,
         border: `1px solid ${style.border}`,
         color: style.text,
         fontSize: 14,
         fontWeight: 500,
         pointerEvents: 'auto',
-        animation: isExiting ? 'avaFade 0.2s ease reverse' : 'avaRise 0.3s ease',
+        // `both` retains the END state. Without a fill mode the card reverts to the
+        // keyframe's start once the animation finishes, leaving it stuck 10px high —
+        // invisible when toasts sat at the bottom, a visible misalignment at the top.
+        animation: isExiting ? 'avaFade 0.2s ease reverse both' : 'avaDrop 0.3s ease both',
         maxWidth: 320,
-        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+        boxShadow: '0 8px 24px rgba(16,24,40,.14), 0 2px 6px rgba(16,24,40,.08)',
       }}
     >
       <Icon size={18} />
