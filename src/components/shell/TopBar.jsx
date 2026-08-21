@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, Sparkles, Bell, ChevronDown, Plus, Wifi, WifiOff, RefreshCw, Menu } from "lucide-react";
+import { Search, ChevronDown, Wifi, WifiOff, RefreshCw, Menu } from "lucide-react";
 import { C, FONT } from "../../theme/tokens.js";
 import { timeWithSeconds } from "../../lib/format.js";
 import { iconBtn } from "../ui/styles.js";
@@ -31,21 +31,6 @@ function TopBar({ onPalette, onMenuClick, title, sub, user, onLogout }) {
     syncing: { c: C.blue, label: "Syncing…", Icon: RefreshCw },
     offline: { c: C.ink3, label: "Offline Mode", Icon: WifiOff },
   }[sync];
-
-  const handleAIAssistant = () => {
-    console.log("AI Assistant clicked");
-    alert("Opening AI Assistant...");
-  };
-
-  const handleQuickAction = () => {
-    console.log("Quick action clicked");
-    alert("Quick Actions Menu...");
-  };
-
-  const handleNotifications = () => {
-    console.log("Notifications clicked");
-    alert("Opening Notifications...");
-  };
 
 
   return (
@@ -87,23 +72,13 @@ function TopBar({ onPalette, onMenuClick, title, sub, user, onLogout }) {
         <span className="ava-topbar-sync-label" style={{ fontSize: 12, fontWeight: 600, color: syncMeta.c }}>{syncMeta.label}</span>
       </div>
 
-      {/* AI assistant */}
-      <button onClick={handleAIAssistant} className="ava-topbar-ai" style={{
-        display: "flex", alignItems: "center", gap: 7, padding: "8px 13px", borderRadius: 10, cursor: "pointer",
-        border: "none", background: `linear-gradient(135deg,${C.blue},${C.violet})`, color: "#fff", fontWeight: 600, fontSize: 12.5,
-        boxShadow: "0 4px 14px rgba(47,107,255,.3)", transition: ".16s", transform: "scale(1)"
-      }} onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.05)"; }} onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; }}>
-        <Sparkles size={14} /> <span className="ava-topbar-ai-label">AI Assistant</span>
-      </button>
-
-      {/* quick action */}
-      <button onClick={handleQuickAction} title="Quick actions" className="ava-topbar-quickaction" style={{...iconBtn, transition: ".16s", transform: "scale(1)"}} onMouseEnter={(e) => { e.currentTarget.style.background = C.surface2; e.currentTarget.style.transform = "scale(1.1)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.transform = "scale(1)"; }}><Plus size={17} color={C.ink2} /></button>
-      
-      {/* notifications */}
-      <button onClick={handleNotifications} title="Notifications" style={{ ...iconBtn, position: "relative", transition: ".16s", transform: "scale(1)" }} onMouseEnter={(e) => { e.currentTarget.style.background = C.surface2; e.currentTarget.style.transform = "scale(1.1)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.transform = "scale(1)"; }}>
-        <Bell size={17} color={C.ink2} />
-        <span style={{ position: "absolute", top: 7, right: 7, width: 7, height: 7, borderRadius: 99, background: C.red, border: "1.5px solid #fff" }} />
-      </button>
+      {/* The AI Assistant, Quick Actions "+" and Notifications bell lived here, all
+          three as alert() stubs. Removed rather than repaired:
+            · AI Assistant  — deferred to its own phase.
+            · Quick Actions — the ⌘K palette already covers it.
+            · Notifications — the feed is tenant-scoped (/{company}/notifications) and
+              this console has no tenant context, so a bell here could never have
+              anything in it. A platform-level stream would be its own feature. */}
 
       <div style={{ position: "relative" }}>
         <button onClick={() => setMenuOpen((o) => !o)} style={{ display: "flex", alignItems: "center", gap: 7, padding: "4px 8px 4px 4px", borderRadius: 99, border: `1px solid ${C.border}`, cursor: "pointer", transition: ".16s", background: "transparent", transform: "scale(1)" }} onMouseEnter={(e) => { e.currentTarget.style.background = C.surface2; e.currentTarget.style.transform = "scale(1.05)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.transform = "scale(1)"; }}>
