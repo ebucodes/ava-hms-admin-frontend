@@ -41,4 +41,46 @@ export default function StatTiles({ companies, summary, loading, error }) {
   );
 }
 
-export const STATUS_COLOR = { active: C.emerald, suspended: C.red, inactive: C.ink3 };
+/**
+ * Status pill colours, keyed on the backend's shared StatusEnum. One map for every
+ * module because the backend has one enum: a per-viewer palette would drift the moment
+ * a status is reused (and StatusEnum reuses plenty — `pending`, `cancelled`, `received`).
+ *
+ * Read the colour as a verdict, not a category: green = settled or a good outcome,
+ * amber = waiting on someone, blue = in flight, red = refused/broken, grey = dormant.
+ * Anything unmapped falls back to violet at the call site, which is the signal that a
+ * new StatusEnum case landed and belongs here.
+ */
+export const STATUS_COLOR = {
+  // Entity lifecycle
+  active: C.emerald, inactive: C.ink3, suspended: C.red,
+  // Encounter / queue
+  open: C.blue, closed: C.ink3,
+  waiting: C.amber, vitals: C.blue, consulting: C.blue,
+  completed: C.emerald, cancelled: C.ink3,
+  // Clinical notes & orders
+  draft: C.ink3, final: C.emerald,
+  pending: C.amber, in_progress: C.blue,
+  // Billing
+  unpaid: C.red, partially_paid: C.amber, paid: C.emerald,
+  // HMO authorization gateway
+  approved_hmo: C.emerald, approved_internal: C.violet,
+  deferred: C.amber, denied: C.red, excluded: C.ink3,
+  // Lab specimens
+  collected: C.blue, received: C.blue, rejected: C.red,
+  // Admissions
+  cleared: C.emerald, pending_admission: C.amber,
+  admitted: C.blue, discharged: C.ink3,
+  // Drug chart (MAR)
+  scheduled: C.blue, administered: C.emerald, not_administered: C.red,
+  // Medication returns & finance
+  confirmed: C.emerald, posted: C.emerald, approved: C.emerald,
+  reimbursed: C.emerald, overdue: C.red,
+  // Beds
+  ready: C.emerald, occupied: C.blue,
+  awaiting_cleaning: C.amber, pending_inspection: C.amber,
+  // Sync
+  applied: C.emerald, quarantined: C.red, resolved: C.emerald,
+  // Billing tokens
+  redeemed: C.emerald,
+};

@@ -95,3 +95,108 @@ export function listSyncConflicts(slug, params = {}) {
 export function listAuditLogs(slug, params = {}) {
   return tenantRequest(slug, `/audit-logs${buildQueryString({ per_page: 20, ...params })}`);
 }
+
+// ---- Facilities (branches) — the console's one full CRUD surface ----
+
+export function listFacilities(slug, params = {}) {
+  return tenantRequest(slug, `/facilities${buildQueryString(params)}`);
+}
+
+export function createFacility(slug, payload) {
+  return tenantRequest(slug, "/facilities", { method: "POST", body: payload });
+}
+
+// POST, not PUT — the backend uses POST for create AND update by convention.
+export function updateFacility(slug, id, payload) {
+  return tenantRequest(slug, `/facilities/${id}`, { method: "POST", body: payload });
+}
+
+export function deleteFacility(slug, id) {
+  return tenantRequest(slug, `/facilities/${id}`, { method: "DELETE" });
+}
+
+// ---- Deeper module viewers (endpoints the console did not previously surface) ----
+
+// HMO — the pre-auth queue is the real bottleneck feed; tariffs are contract-confidential
+// (PRD 7.6), which is why only an admin-level permission reaches them.
+export function listAuthorizations(slug, params = {}) {
+  // No status default here — the viewer's filter config owns it, so the control and the
+  // query can never disagree about what is being shown.
+  return tenantRequest(slug, `/hmo/authorizations${buildQueryString({ per_page: 20, ...params })}`);
+}
+
+export function listTariffs(slug, params = {}) {
+  return tenantRequest(slug, `/hmo/tariffs${buildQueryString({ per_page: 20, ...params })}`);
+}
+
+// Finance — receivables
+export function receivablesAging(slug) {
+  return tenantRequest(slug, '/finance/receivables/aging');
+}
+
+export function listDunning(slug) {
+  return tenantRequest(slug, '/finance/receivables/dunning');
+}
+
+export function listPayerInvoices(slug, params = {}) {
+  return tenantRequest(slug, `/finance/receivables/invoices${buildQueryString({ per_page: 20, ...params })}`);
+}
+
+// Finance — petty cash & budgets
+export function listPettyCash(slug, params = {}) {
+  return tenantRequest(slug, `/finance/petty-cash${buildQueryString({ per_page: 20, ...params })}`);
+}
+
+export function budgetUtilisation(slug) {
+  return tenantRequest(slug, '/finance/budgets/utilisation');
+}
+
+// Finance — ledger integrity & reports
+export function trialBalance(slug, params = {}) {
+  return tenantRequest(slug, `/finance/ledger/trial-balance${buildQueryString(params)}`);
+}
+
+// Laboratory
+export function listSpecimens(slug, params = {}) {
+  return tenantRequest(slug, `/lab/specimens${buildQueryString({ per_page: 20, ...params })}`);
+}
+
+export function listLabTests(slug, params = {}) {
+  return tenantRequest(slug, `/lab/tests${buildQueryString({ per_page: 20, ...params })}`);
+}
+
+// Pharmacy
+export function listDispensingQueue(slug, params = {}) {
+  return tenantRequest(slug, `/pharmacy/dispensing-queue${buildQueryString({ per_page: 20, ...params })}`);
+}
+
+// Ward
+export function listBedBottlenecks(slug) {
+  return tenantRequest(slug, '/ward/beds/bottlenecks');
+}
+
+export function listOverdueDoses(slug) {
+  return tenantRequest(slug, '/ward/mar/doses/overdue');
+}
+
+// Sync
+export function listSyncBatches(slug, params = {}) {
+  return tenantRequest(slug, `/sync/batches${buildQueryString({ per_page: 20, ...params })}`);
+}
+
+export function listMpiCandidates(slug) {
+  return tenantRequest(slug, '/sync/mpi/candidates');
+}
+
+export function listMpiAliases(slug, params = {}) {
+  return tenantRequest(slug, `/sync/mpi/aliases${buildQueryString({ per_page: 20, ...params })}`);
+}
+
+export function syncCatalog(slug) {
+  return tenantRequest(slug, '/sync/catalog');
+}
+
+// Billing — offline tokens
+export function listBillingTokens(slug, params = {}) {
+  return tenantRequest(slug, `/billing/tokens${buildQueryString({ per_page: 20, ...params })}`);
+}

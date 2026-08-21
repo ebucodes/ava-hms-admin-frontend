@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FlaskConical, ShieldCheck, Sparkles, Command, Plus, ArrowRight } from "lucide-react";
 import { C, FONT, shadow } from "../../theme/tokens.js";
-import { NAV } from "../../data/mockData.js";
+import { NAV } from "../../data/nav.js";
 
 function CommandPalette({ open, onClose, go }) {
   const [q, setQ] = useState("");

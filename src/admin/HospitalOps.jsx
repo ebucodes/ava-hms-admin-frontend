@@ -6,25 +6,30 @@ import { C, FONT } from '@/src/theme/tokens.js';
 import { td } from '@/src/components/ui/styles.js';
 import TableShell from '@/src/components/data/TableShell.jsx';
 import Badge from '@/src/components/ui/Badge.jsx';
-import { STATUS_COLOR } from '@/src/admin/StatTiles.jsx';
-import { upper, titleCase } from '@/src/lib/format.js';
+import { upper, titleCase, money } from '@/src/lib/format.js';
+import StatusPill from '@/src/components/ui/StatusPill.jsx';
 import { ApiError } from '@/src/lib/api/client.js';
 import AddPatientModal from '@/src/admin/AddPatientModal.jsx';
 import Pagination from '@/src/components/ui/Pagination.jsx';
 import {
   listPatients, listStaff, listQueue, listOrders, listStock, listBills, listLabWorklist, listPayers,
   listAdmissions, listMarOrders, listJournalEntries, listRoles, listSyncNodes, listSyncConflicts,
-  listAuditLogs,
+  listAuditLogs, listAuthorizations, listTariffs, listPayerInvoices, listDunning,
+  listPettyCash, budgetUtilisation, listSpecimens, listLabTests, listDispensingQueue,
+  listBedBottlenecks, listOverdueDoses, listSyncBatches, listMpiAliases, syncCatalog,
+  listBillingTokens,
 } from '@/src/lib/api/tenant.js';
 import AnalyticsOps from '@/src/admin/AnalyticsOps.jsx';
+import FacilitiesOps from '@/src/admin/FacilitiesOps.jsx';
+import LedgerHealthOps from '@/src/admin/LedgerHealthOps.jsx';
+import ProfitLossOps from '@/src/admin/ProfitLossOps.jsx';
+import ReceivablesAgingOps from '@/src/admin/ReceivablesAgingOps.jsx';
+import BedCensusOps from '@/src/admin/BedCensusOps.jsx';
+import MpiCandidatesOps from '@/src/admin/MpiCandidatesOps.jsx';
 import SettingsOps from '@/src/admin/SettingsOps.jsx';
 
-function statusCell(status) {
-  const color = STATUS_COLOR[status] || C.violet;
-  return <Badge color={color} bg={color + '14'} dot>{upper(status)}</Badge>;
-}
+const statusCell = (status) => <StatusPill status={status} />;
 const patientName = (r) => r?.patient?.full_name || r?.patient_name || r?.patient?.name || '—';
-const money = (v) => (v == null || v === '' ? '—' : `₦${Number(v).toLocaleString()}`);
 
 /** Config per operation: fetcher, columns, and a defensive read-only row. */
 const OPS = {
@@ -210,10 +215,305 @@ const OPS = {
       </tr>
     ),
   },
+  // ---- HMO ----
+  preauth: {
+    title: 'Pre-authorisation Queue', cols: ['Item', 'Patient', 'Payer', 'Estimate', 'Status'], fetch: listAuthorizations,
+    // Pending is the default because this feed exists to show the bottleneck — an
+    // authorisation nobody has decided is what holds a patient at the desk.
+    filters: [{ key: 'status', label: 'All decisions', type: 'select', default: 'pending', options: [
+      { value: 'pending', label: 'Pending' },
+      { value: 'approved_hmo', label: 'Approved (HMO)' },
+      { value: 'approved_internal', label: 'Approved (internal override)' },
+      { value: 'deferred', label: 'Deferred' },
+      { value: 'denied', label: 'Denied' },
+      { value: 'excluded', label: 'Excluded' },
+    ] }],
+    row: (a) => (
+      <tr key={a.id} className="ava-row">
+        <td style={td}>
+          <div style={{ fontWeight: 700, color: C.ink }}>{a.description || a.item_code || '—'}</div>
+          <div style={{ fontSize: 11, color: C.ink3 }}>{titleCase(a.item_type)}{a.is_blocking ? ' · blocking' : ''}</div>
+        </td>
+        <td style={td}>{a.patient?.full_name || '—'}</td>
+        <td style={td}>{a.payer?.name || '—'}</td>
+        <td style={td}>{money(a.estimated_amount)}</td>
+        <td style={td}>{statusCell(a.status)}</td>
+      </tr>
+    ),
+  },
+  tariffs: {
+    title: 'Tariffs & Price Books', cols: ['Item', 'Payer', 'Class', 'Price', 'Status'], fetch: listTariffs,
+    // Contract-confidential by design (PRD 7.6): only admin-level permissions reach this,
+    // which is why front desk sees payers but never their negotiated prices.
+    row: (t) => (
+      <tr key={t.id} className="ava-row">
+        <td style={td}>
+          <div style={{ fontWeight: 700, color: C.ink }}>{t.description || t.item_code || '—'}</div>
+          <div style={{ fontSize: 11, color: C.ink3 }}>{titleCase(t.item_type)}{t.requires_authorization ? ' · needs pre-auth' : ''}{t.is_excluded ? ' · excluded' : ''}</div>
+        </td>
+        <td style={td}>{t.payer?.name || '—'}</td>
+        <td style={td}>{titleCase(t.item_class) || '—'}</td>
+        <td style={td}>{money(t.price)}{t.discount_percent ? <span style={{ fontSize: 11, color: C.ink3 }}> −{t.discount_percent}%</span> : null}</td>
+        <td style={td}>{statusCell(t.status)}</td>
+      </tr>
+    ),
+  },
+
+  // ---- Finance ----
+  invoices: {
+    title: 'Payer Invoices', cols: ['Invoice', 'Payer', 'Total', 'Balance', 'Status'], fetch: listPayerInvoices,
+    row: (i) => (
+      <tr key={i.id} className="ava-row">
+        <td style={td}>
+          <div style={{ fontWeight: 700, color: C.ink, fontFamily: FONT.mono }}>{i.invoice_number || '—'}</div>
+          <div style={{ fontSize: 11, color: C.ink3 }}>{i.period_start} → {i.period_end}</div>
+        </td>
+        <td style={td}>{i.payer?.name || '—'}</td>
+        <td style={td}>{money(i.total)}</td>
+        <td style={td}>
+          {money(i.balance)}
+          {i.days_overdue > 0 && <div style={{ fontSize: 11, color: C.red, fontWeight: 700 }}>{i.days_overdue}d overdue · {i.aging_bucket}</div>}
+        </td>
+        <td style={td}>{statusCell(i.status)}</td>
+      </tr>
+    ),
+  },
+  dunning: {
+    title: 'Dunning (Overdue Invoices)', cols: ['Invoice', 'Payer', 'Due', 'Balance', 'Status'], fetch: listDunning,
+    row: (i) => (
+      <tr key={i.id} className="ava-row">
+        <td style={td}><div style={{ fontWeight: 700, color: C.ink, fontFamily: FONT.mono }}>{i.invoice_number || '—'}</div></td>
+        <td style={td}>{i.payer?.name || '—'}</td>
+        <td style={td}>
+          <div>{i.due_on || '—'}</div>
+          {i.days_overdue > 0 && <div style={{ fontSize: 11, color: C.red, fontWeight: 700 }}>{i.days_overdue} days late</div>}
+        </td>
+        <td style={td}>{money(i.balance)}</td>
+        <td style={td}>{statusCell(i.status)}</td>
+      </tr>
+    ),
+  },
+  pettycash: {
+    title: 'Petty Cash', cols: ['Request', 'Purpose', 'Amount', 'Requested by', 'Status'], fetch: listPettyCash,
+    row: (r) => (
+      <tr key={r.id} className="ava-row">
+        <td style={td}>
+          <div style={{ fontWeight: 700, color: C.ink, fontFamily: FONT.mono }}>{r.request_number || '—'}</div>
+          <div style={{ fontSize: 11, color: C.ink3 }}>{r.facility?.name || r.facility || ''}</div>
+        </td>
+        <td style={td}>{r.purpose || '—'}</td>
+        <td style={td}>{money(r.amount)}</td>
+        <td style={td}>{r.requested_by?.name || '—'}</td>
+        <td style={td}>{statusCell(r.status)}</td>
+      </tr>
+    ),
+  },
+  budgets: {
+    title: 'Budget Utilisation', cols: ['Budget', 'Period', 'Allocated', 'Utilised', 'Used'], fetch: budgetUtilisation,
+    row: (b) => {
+      const pct = Number(b.utilisation_percent ?? 0);
+      const bar = b.over_budget ? C.red : pct >= 80 ? C.amber : C.emerald;
+      return (
+        <tr key={b.id} className="ava-row">
+          <td style={td}>
+            <div style={{ fontWeight: 700, color: C.ink }}>{b.name || '—'}</div>
+            <div style={{ fontSize: 11, color: C.ink3 }}>{b.facility || 'All branches'}{b.hard_stop ? ' · hard stop' : ''}</div>
+          </td>
+          <td style={td}>{b.period_start} → {b.period_end}</td>
+          <td style={td}>{money(b.allocated)}</td>
+          <td style={td}>{money(b.utilised)}</td>
+          <td style={td}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ flex: 1, minWidth: 60, height: 6, borderRadius: 4, background: C.borderSoft, overflow: 'hidden' }}>
+                <div style={{ width: `${Math.min(pct, 100)}%`, height: '100%', background: bar }} />
+              </div>
+              <span style={{ fontSize: 12, fontWeight: 700, color: bar }}>{pct}%</span>
+            </div>
+          </td>
+        </tr>
+      );
+    },
+  },
+
+  // ---- Laboratory ----
+  specimens: {
+    title: 'Specimens', cols: ['Accession', 'Patient', 'Type', 'Collected', 'Status'], fetch: listSpecimens,
+    row: (s) => (
+      <tr key={s.id} className="ava-row">
+        <td style={td}>
+          <div style={{ fontWeight: 700, color: C.ink, fontFamily: FONT.mono }}>{s.accession_number || '—'}</div>
+          {s.rejection_reason && <div style={{ fontSize: 11, color: C.red }}>{s.rejection_reason}</div>}
+        </td>
+        <td style={td}>{patientName(s)}</td>
+        <td style={td}>{titleCase(s.specimen_type) || '—'}</td>
+        <td style={td}>{s.collected_at ? new Date(s.collected_at).toLocaleString() : '—'}</td>
+        <td style={td}>{statusCell(s.status)}</td>
+      </tr>
+    ),
+  },
+  labtests: {
+    title: 'Test Catalog', cols: ['Code', 'Test', 'Specimen', 'Analytes', 'Price', 'Status'], fetch: listLabTests,
+    row: (t) => (
+      <tr key={t.id} className="ava-row">
+        <td style={td}><span style={{ fontFamily: FONT.mono, fontSize: 12, fontWeight: 700, color: C.ink }}>{t.code || '—'}</span></td>
+        <td style={td}><div style={{ fontWeight: 700, color: C.ink }}>{t.name || '—'}</div></td>
+        <td style={td}>{titleCase(t.specimen_type) || '—'}</td>
+        <td style={td}>{Array.isArray(t.analytes) ? t.analytes.length : '—'}</td>
+        <td style={td}>{money(t.price)}</td>
+        <td style={td}>{statusCell(t.status)}</td>
+      </tr>
+    ),
+  },
+
+  // ---- Pharmacy ----
+  dispensing: {
+    title: 'Dispensing Queue', cols: ['Prescription', 'Prescriber', 'Items', 'Raised', 'Status'], fetch: listDispensingQueue,
+    // PrescriptionResource carries patient_id but no patient object, so this shows the
+    // prescription rather than inventing a name the API never sent.
+    row: (p) => (
+      <tr key={p.id} className="ava-row">
+        <td style={td}>
+          <div style={{ fontWeight: 700, color: C.ink, fontFamily: FONT.mono }}>{String(p.id).slice(0, 8)}</div>
+          {p.notes && <div style={{ fontSize: 11, color: C.ink3 }}>{p.notes}</div>}
+        </td>
+        <td style={td}>{p.prescriber?.name || '—'}</td>
+        <td style={td}>{Array.isArray(p.items) ? p.items.length : '—'}</td>
+        <td style={td}>{p.created_at ? new Date(p.created_at).toLocaleString() : '—'}</td>
+        <td style={td}>{statusCell(p.status)}</td>
+      </tr>
+    ),
+  },
+
+  // ---- Ward ----
+  bottlenecks: {
+    title: 'Bed Bottlenecks', cols: ['Bed', 'Ward', 'Stuck since', 'Waiting', 'Status'], fetch: listBedBottlenecks,
+    row: (b) => (
+      <tr key={b.id} className="ava-row">
+        <td style={td}>
+          <div style={{ fontWeight: 700, color: C.ink }}>{b.bed_number || '—'}</div>
+          {b.room_number && <div style={{ fontSize: 11, color: C.ink3 }}>Room {b.room_number}</div>}
+        </td>
+        <td style={td}>{b.ward?.name || '—'}</td>
+        <td style={td}>{b.status_changed_at ? new Date(b.status_changed_at).toLocaleString() : '—'}</td>
+        <td style={td}>
+          {b.turnover_minutes != null
+            ? <span style={{ fontWeight: 700, color: C.amber }}>{b.turnover_minutes} min</span>
+            : '—'}
+        </td>
+        <td style={td}>{statusCell(b.status)}</td>
+      </tr>
+    ),
+  },
+  overduedoses: {
+    title: 'Overdue Doses (MAR)', cols: ['Drug', 'Scheduled', 'Overdue by', 'Admission', 'Status'], fetch: listOverdueDoses,
+    row: (d) => (
+      <tr key={d.id} className="ava-row">
+        <td style={td}><div style={{ fontWeight: 700, color: C.ink }}>{d.order?.drug_name || '—'}</div></td>
+        <td style={td}>{d.scheduled_at ? new Date(d.scheduled_at).toLocaleString() : '—'}</td>
+        <td style={td}>
+          {d.overdue_minutes != null
+            ? <span style={{ fontWeight: 700, color: C.red }}>{d.overdue_minutes} min</span>
+            : '—'}
+        </td>
+        <td style={td}>{d.admission?.admission_number || '—'}</td>
+        <td style={td}>{statusCell(d.status)}</td>
+      </tr>
+    ),
+  },
+
+  // ---- Offline & Sync ----
+  batches: {
+    title: 'Sync Batches', cols: ['Batch', 'Node', 'Direction', 'Changes', 'Status'], fetch: listSyncBatches,
+    row: (b) => (
+      <tr key={b.id} className="ava-row">
+        <td style={td}>
+          <div style={{ fontWeight: 700, color: C.ink, fontFamily: FONT.mono, fontSize: 12 }}>{String(b.batch_uuid || '').slice(0, 8) || '—'}</div>
+          {b.error && <div style={{ fontSize: 11, color: C.red }}>{b.error}</div>}
+        </td>
+        <td style={td}>{b.node?.name || '—'}</td>
+        <td style={td}><Badge color={C.violet} bg={C.violet + '14'}>{upper(b.direction)}</Badge></td>
+        <td style={td}>
+          <span>{b.applied_count ?? 0}/{b.change_count ?? 0} applied</span>
+          {(b.conflict_count > 0 || b.rejected_count > 0) && (
+            <div style={{ fontSize: 11, color: C.amber, fontWeight: 700 }}>
+              {b.conflict_count || 0} conflicts · {b.rejected_count || 0} rejected
+            </div>
+          )}
+        </td>
+        <td style={td}>{statusCell(b.status)}</td>
+      </tr>
+    ),
+  },
+  aliases: {
+    title: 'MPI Aliases (Merged Records)', cols: ['Merged record', 'Survivor', 'Reason', 'Merged by', 'When'], fetch: listMpiAliases,
+    row: (a) => (
+      <tr key={a.id} className="ava-row">
+        <td style={td}><span style={{ fontFamily: FONT.mono, fontSize: 12, fontWeight: 700, color: C.ink }}>{a.alias_patient_number || '—'}</span></td>
+        <td style={td}>{a.patient?.full_name || '—'}</td>
+        <td style={td}>{titleCase(a.match_reason) || '—'}</td>
+        <td style={td}>{a.merged_by?.name || '—'}</td>
+        <td style={td}>{a.created_at ? new Date(a.created_at).toLocaleString() : '—'}</td>
+      </tr>
+    ),
+  },
+  catalog: {
+    title: 'Sync Catalog (Whitelist)', cols: ['Entity', 'Module', 'Conflict policy', 'Push', 'Columns'], fetch: syncCatalog,
+    // This one names its collection `entities`, not `items`.
+    pick: (d) => d?.entities || [],
+    // The whitelist IS the safety boundary: an entity absent here cannot be pushed by an
+    // edge node at all, so this view answers "what can a node actually write offline?".
+    row: (e) => (
+      <tr key={e.entity_type} className="ava-row">
+        <td style={td}>
+          <div style={{ fontWeight: 700, color: C.ink }}>{e.label || titleCase(e.entity_type)}</div>
+          <div style={{ fontSize: 11, color: C.ink3, fontFamily: FONT.mono }}>{e.entity_type}</div>
+        </td>
+        <td style={td}>{e.module === 'hmo' ? 'HMO' : titleCase(e.module)}</td>
+        <td style={td}>{e.conflict_policy_label || titleCase(e.conflict_policy)}</td>
+        <td style={td}>{e.accepts_push
+          ? <Badge color={C.emerald} bg={C.emerald + '14'} dot>ACCEPTS PUSH</Badge>
+          : <Badge color={C.ink3} bg={C.ink3 + '14'}>PULL ONLY</Badge>}
+          {e.branch_scoped && <div style={{ fontSize: 11, color: C.ink3, marginTop: 3 }}>branch-scoped</div>}
+        </td>
+        <td style={td}>{Array.isArray(e.columns) ? e.columns.length : '—'}</td>
+      </tr>
+    ),
+  },
+
+  // ---- Billing ----
+  tokens: {
+    title: 'Offline Billing Tokens', cols: ['Token', 'Patient', 'Amount', 'Expires', 'Status'], fetch: listBillingTokens,
+    row: (t) => (
+      <tr key={t.id} className="ava-row">
+        <td style={td}><span style={{ fontFamily: FONT.mono, fontSize: 12, fontWeight: 700, color: C.ink }}>{t.token_code || '—'}</span></td>
+        <td style={td}>{patientName(t)}</td>
+        <td style={td}>
+          {t.amount_formatted || money(t.amount)}
+          {t.redeemed_amount != null && <div style={{ fontSize: 11, color: C.ink3 }}>redeemed {money(t.redeemed_amount)}</div>}
+        </td>
+        <td style={td}>
+          {t.expires_at ? new Date(t.expires_at).toLocaleString() : '—'}
+          {/* is_expired is DERIVED server-side from expires_at — there is no `expired`
+              status case, so the pill alone would read `active` past expiry. */}
+          {t.is_expired && <div style={{ fontSize: 11, color: C.red, fontWeight: 700 }}>expired</div>}
+        </td>
+        <td style={td}>{statusCell(t.status)}</td>
+      </tr>
+    ),
+  },
 };
 
 // Views that are not a paginated table — they render their own component.
-const CUSTOM_OPS = { analytics: AnalyticsOps, settings: SettingsOps };
+const CUSTOM_OPS = {
+  analytics: AnalyticsOps,
+  settings: SettingsOps,
+  facilities: FacilitiesOps,
+  ledger: LedgerHealthOps,
+  pnl: ProfitLossOps,
+  aging: ReceivablesAgingOps,
+  census: BedCensusOps,
+  mpi: MpiCandidatesOps,
+};
 
 /** Viewer for a hospital's tenant data (via the act-as token). Read-only, except
  *  where an operation exposes a write action (e.g. Patients → Add patient). */
@@ -233,7 +533,10 @@ export default function HospitalOps({ slug, op }) {
     setErrMsg(null);
     cfg.fetch(slug, { page, ...active })
       .then((data) => {
-        setRows(data?.items || (Array.isArray(data) ? data : []));
+        // Most endpoints return { items, pagination } and several return a flat array —
+        // `pick` covers the handful that name their collection something else.
+        const list = cfg.pick ? cfg.pick(data) : (data?.items || (Array.isArray(data) ? data : []));
+        setRows(Array.isArray(list) ? list : []);
         setMeta(data?.pagination || null);
       })
       .catch((err) => {
@@ -243,8 +546,13 @@ export default function HospitalOps({ slug, op }) {
   };
 
   useEffect(() => {
-    setFilters({});
-    if (cfg && !CUSTOM_OPS[op]) reload(1, {});
+    // A filter's `default` is the single source of truth for the opening query, so the
+    // control always shows what the table is actually filtered by.
+    const initial = Object.fromEntries(
+      (cfg?.filters || []).filter((f) => f.default !== undefined).map((f) => [f.key, f.default]),
+    );
+    setFilters(initial);
+    if (cfg && !CUSTOM_OPS[op]) reload(1, initial);
   }, [slug, op]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Applying a filter restarts at page 1 — page 3 of the unfiltered list is not

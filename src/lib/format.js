@@ -12,3 +12,7 @@ export const titleCase = (s) =>
         .replace(/\s+/g, " ")
         .trim()
         .replace(/\b\w/g, (m) => m.toUpperCase());
+
+/** Naira amount for display. Null/empty renders an em dash, never ₦0 — a missing
+ *  figure and a zero figure mean different things on a bill. */
+export const money = (v) => (v == null || v === "" ? "—" : `₦${Number(v).toLocaleString()}`);

@@ -4,7 +4,10 @@ import { useEffect, useState } from 'react';
 import {
   ArrowLeft, Building2, Save, Power, PowerOff, ChevronRight,
   UserRound, Users, ClipboardList, Stethoscope, Pill, Receipt, FlaskConical, ShieldCheck,
-  BedDouble, Tablets, Wallet, BarChart3, KeyRound, RadioTower, GitMerge, Settings, ScrollText,
+  BedDouble, Tablets, Wallet, BarChart3, KeyRound, RadioTower, GitMerge, Settings, ScrollText, Network,
+  PackageCheck, TestTube, ListChecks, Ticket, ShieldQuestion, Tags, LayoutGrid, TimerReset, AlarmClock,
+  ShieldAlert, LineChart, Hourglass, FileText, AlertTriangle, Coins, PieChart, Layers, BookLock,
+  Users2, Link2,
 } from 'lucide-react';
 import { C, FONT } from '@/src/theme/tokens.js';
 import { useToast } from '@/src/components/ui/Toast.jsx';
@@ -18,25 +21,60 @@ import { upper } from '@/src/lib/format.js';
 import { adminGetCompany, adminUpdateCompany, actAs } from '@/src/lib/api/admin.js';
 import { ApiError } from '@/src/lib/api/client.js';
 
-// Operational CTAs. `op` set → read-only view is wired; otherwise coming soon.
+// Operational CTAs, grouped by module. `op` set → the view is wired; otherwise "soon".
+// Grouped rather than one flat grid: with 30+ viewers a single auto-fit wall is a
+// scavenger hunt, and the groups are the hospital's own module boundaries.
 const CTAS = [
-  { id: 'patients', label: 'Patients', icon: UserRound, op: 'patients' },
-  { id: 'staff', label: 'Staff & Roles', icon: Users, op: 'staff' },
-  { id: 'queue', label: 'Front Desk', icon: ClipboardList, op: 'queue' },
-  { id: 'clinical', label: 'Clinical / EMR', icon: Stethoscope, op: 'clinical' },
-  { id: 'pharmacy', label: 'Pharmacy', icon: Pill, op: 'pharmacy' },
-  { id: 'billing', label: 'Billing', icon: Receipt, op: 'billing' },
-  { id: 'lab', label: 'Laboratory', icon: FlaskConical, op: 'lab' },
-  { id: 'hmo', label: 'HMO', icon: ShieldCheck, op: 'hmo' },
-  { id: 'ward', label: 'Ward', icon: BedDouble, op: 'ward' },
-  { id: 'drugchart', label: 'Drug Chart', icon: Tablets, op: 'drugchart' },
-  { id: 'finance', label: 'Finance', icon: Wallet, op: 'finance' },
-  { id: 'analytics', label: 'Analytics', icon: BarChart3, op: 'analytics' },
-  { id: 'roles', label: 'Roles', icon: KeyRound, op: 'roles' },
-  { id: 'sync', label: 'Offline & Sync', icon: RadioTower, op: 'sync' },
-  { id: 'conflicts', label: 'Sync Conflicts', icon: GitMerge, op: 'conflicts' },
-  { id: 'audit', label: 'Audit Trail', icon: ScrollText, op: 'audit' },
-  { id: 'settings', label: 'Settings', icon: Settings, op: 'settings' },
+  { id: 'facilities', label: 'Branches', icon: Network, op: 'facilities', group: 'Hospital' },
+  { id: 'staff', label: 'Staff & Roles', icon: Users, op: 'staff', group: 'Hospital' },
+  { id: 'roles', label: 'Roles', icon: KeyRound, op: 'roles', group: 'Hospital' },
+  { id: 'settings', label: 'Settings', icon: Settings, op: 'settings', group: 'Hospital' },
+  { id: 'audit', label: 'Audit Trail', icon: ScrollText, op: 'audit', group: 'Hospital' },
+
+  { id: 'patients', label: 'Patients', icon: UserRound, op: 'patients', group: 'Front Desk & Clinical' },
+  { id: 'queue', label: 'Front Desk', icon: ClipboardList, op: 'queue', group: 'Front Desk & Clinical' },
+  { id: 'clinical', label: 'Clinical / EMR', icon: Stethoscope, op: 'clinical', group: 'Front Desk & Clinical' },
+
+  { id: 'pharmacy', label: 'Pharmacy Stock', icon: Pill, op: 'pharmacy', group: 'Pharmacy & Lab' },
+  { id: 'dispensing', label: 'Dispensing Queue', icon: PackageCheck, op: 'dispensing', group: 'Pharmacy & Lab' },
+  { id: 'lab', label: 'Lab Worklist', icon: FlaskConical, op: 'lab', group: 'Pharmacy & Lab' },
+  { id: 'specimens', label: 'Specimens', icon: TestTube, op: 'specimens', group: 'Pharmacy & Lab' },
+  { id: 'labtests', label: 'Test Catalog', icon: ListChecks, op: 'labtests', group: 'Pharmacy & Lab' },
+
+  { id: 'billing', label: 'Bills', icon: Receipt, op: 'billing', group: 'Billing & HMO' },
+  { id: 'tokens', label: 'Offline Tokens', icon: Ticket, op: 'tokens', group: 'Billing & HMO' },
+  { id: 'hmo', label: 'Payers', icon: ShieldCheck, op: 'hmo', group: 'Billing & HMO' },
+  { id: 'preauth', label: 'Pre-auth Queue', icon: ShieldQuestion, op: 'preauth', group: 'Billing & HMO' },
+  { id: 'tariffs', label: 'Tariffs', icon: Tags, op: 'tariffs', group: 'Billing & HMO' },
+
+  { id: 'ward', label: 'Admissions', icon: BedDouble, op: 'ward', group: 'Ward' },
+  { id: 'census', label: 'Bed Census', icon: LayoutGrid, op: 'census', group: 'Ward' },
+  { id: 'bottlenecks', label: 'Bed Bottlenecks', icon: TimerReset, op: 'bottlenecks', group: 'Ward' },
+  { id: 'drugchart', label: 'Drug Chart', icon: Tablets, op: 'drugchart', group: 'Ward' },
+  { id: 'overduedoses', label: 'Overdue Doses', icon: AlarmClock, op: 'overduedoses', group: 'Ward' },
+
+  { id: 'finance', label: 'General Ledger', icon: Wallet, op: 'finance', group: 'Finance' },
+  { id: 'ledger', label: 'Ledger Integrity', icon: ShieldAlert, op: 'ledger', group: 'Finance' },
+  { id: 'pnl', label: 'Profit & Loss', icon: LineChart, op: 'pnl', group: 'Finance' },
+  { id: 'aging', label: 'Receivables Aging', icon: Hourglass, op: 'aging', group: 'Finance' },
+  { id: 'invoices', label: 'Payer Invoices', icon: FileText, op: 'invoices', group: 'Finance' },
+  { id: 'dunning', label: 'Dunning', icon: AlertTriangle, op: 'dunning', group: 'Finance' },
+  { id: 'pettycash', label: 'Petty Cash', icon: Coins, op: 'pettycash', group: 'Finance' },
+  { id: 'budgets', label: 'Budget Utilisation', icon: PieChart, op: 'budgets', group: 'Finance' },
+  { id: 'analytics', label: 'Analytics', icon: BarChart3, op: 'analytics', group: 'Finance' },
+
+  { id: 'sync', label: 'Edge Nodes', icon: RadioTower, op: 'sync', group: 'Offline & Sync' },
+  { id: 'batches', label: 'Sync Batches', icon: Layers, op: 'batches', group: 'Offline & Sync' },
+  { id: 'conflicts', label: 'Sync Conflicts', icon: GitMerge, op: 'conflicts', group: 'Offline & Sync' },
+  { id: 'catalog', label: 'Sync Catalog', icon: BookLock, op: 'catalog', group: 'Offline & Sync' },
+  { id: 'mpi', label: 'Duplicate Patients', icon: Users2, op: 'mpi', group: 'Offline & Sync' },
+  { id: 'aliases', label: 'MPI Aliases', icon: Link2, op: 'aliases', group: 'Offline & Sync' },
+];
+
+// Render order for the groups above.
+const CTA_GROUPS = [
+  'Hospital', 'Front Desk & Clinical', 'Pharmacy & Lab',
+  'Billing & HMO', 'Ward', 'Finance', 'Offline & Sync',
 ];
 
 function statusBadge(status) {
@@ -190,36 +228,47 @@ export default function HospitalDetail({ slug, onBack, onChanged }) {
           <Card>
             <div style={{ fontFamily: FONT.display, fontSize: 14, fontWeight: 700, color: C.ink, marginBottom: 4 }}>Operations</div>
             <div style={{ fontSize: 12, color: C.ink3, marginBottom: 14 }}>Open this hospital's records — view and act on their behalf.</div>
-            <div style={{ display: 'grid', gap: 10, gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))' }}>
-              {CTAS.map((cta) => {
-                const soon = !cta.op;
-                const busy = opBusy === cta.id;
-                return (
-                  <button
-                    key={cta.id}
-                    onClick={() => openOp(cta)}
-                    disabled={busy}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', borderRadius: 12,
-                      border: `1px solid ${C.border}`, background: C.surface, cursor: busy ? 'default' : 'pointer',
-                      textAlign: 'left', opacity: soon ? 0.62 : 1,
-                    }}
-                    onMouseEnter={(e) => { if (!busy) e.currentTarget.style.background = C.surface2; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = C.surface; }}
-                  >
-                    <div style={{ width: 34, height: 34, borderRadius: 9, background: C.blueSoft, display: 'grid', placeItems: 'center', flexShrink: 0 }}>
-                      <cta.icon size={17} color={C.blue} />
-                    </div>
-                    <span style={{ flex: 1, fontSize: 13, fontWeight: 600, color: C.ink }}>{cta.label}</span>
-                    {soon ? (
-                      <span style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: '.06em', color: C.ink3, background: C.borderSoft, padding: '2px 6px', borderRadius: 6 }}>SOON</span>
-                    ) : (
-                      <ChevronRight size={15} color={C.ink3} />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
+            {CTA_GROUPS.map((group) => {
+              const inGroup = CTAS.filter((c) => c.group === group);
+              if (inGroup.length === 0) return null;
+              return (
+                <div key={group} style={{ marginBottom: 16 }}>
+                  <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '.07em', color: C.ink3, marginBottom: 8 }}>
+                    {group.toUpperCase()}
+                  </div>
+                  <div style={{ display: 'grid', gap: 10, gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))' }}>
+                    {inGroup.map((cta) => {
+                      const soon = !cta.op;
+                      const busy = opBusy === cta.id;
+                      return (
+                        <button
+                          key={cta.id}
+                          onClick={() => openOp(cta)}
+                          disabled={busy}
+                          style={{
+                            display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', borderRadius: 12,
+                            border: `1px solid ${C.border}`, background: C.surface, cursor: busy ? 'default' : 'pointer',
+                            textAlign: 'left', opacity: soon ? 0.62 : 1,
+                          }}
+                          onMouseEnter={(e) => { if (!busy) e.currentTarget.style.background = C.surface2; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = C.surface; }}
+                        >
+                          <div style={{ width: 34, height: 34, borderRadius: 9, background: C.blueSoft, display: 'grid', placeItems: 'center', flexShrink: 0 }}>
+                            <cta.icon size={17} color={C.blue} />
+                          </div>
+                          <span style={{ flex: 1, fontSize: 13, fontWeight: 600, color: C.ink }}>{cta.label}</span>
+                          {soon ? (
+                            <span style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: '.06em', color: C.ink3, background: C.borderSoft, padding: '2px 6px', borderRadius: 6 }}>SOON</span>
+                          ) : (
+                            <ChevronRight size={15} color={C.ink3} />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
           </Card>
 
           {/* Counts */}

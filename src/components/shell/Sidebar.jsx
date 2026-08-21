@@ -1,6 +1,6 @@
 import { ChevronRight, ChevronLeft, Activity } from "lucide-react";
 import { C, FONT } from "../../theme/tokens.js";
-import { NAV } from "../../data/mockData.js";
+import { NAV } from "../../data/nav.js";
 import { titleCase } from "../../lib/format.js";
 
 function initials(name) {
