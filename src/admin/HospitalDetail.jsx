@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import {
   ArrowLeft, Building2, Save, Power, PowerOff, ChevronRight,
   UserRound, Users, ClipboardList, Stethoscope, Pill, Receipt, FlaskConical, ShieldCheck,
+  BedDouble, Tablets, Wallet, BarChart3, KeyRound, RadioTower, GitMerge, Settings, ScrollText,
 } from 'lucide-react';
 import { C, FONT } from '@/src/theme/tokens.js';
 import { useToast } from '@/src/components/ui/Toast.jsx';
@@ -27,6 +28,15 @@ const CTAS = [
   { id: 'billing', label: 'Billing', icon: Receipt, op: 'billing' },
   { id: 'lab', label: 'Laboratory', icon: FlaskConical, op: 'lab' },
   { id: 'hmo', label: 'HMO', icon: ShieldCheck, op: 'hmo' },
+  { id: 'ward', label: 'Ward', icon: BedDouble, op: 'ward' },
+  { id: 'drugchart', label: 'Drug Chart', icon: Tablets, op: 'drugchart' },
+  { id: 'finance', label: 'Finance', icon: Wallet, op: 'finance' },
+  { id: 'analytics', label: 'Analytics', icon: BarChart3, op: 'analytics' },
+  { id: 'roles', label: 'Roles', icon: KeyRound, op: 'roles' },
+  { id: 'sync', label: 'Offline & Sync', icon: RadioTower, op: 'sync' },
+  { id: 'conflicts', label: 'Sync Conflicts', icon: GitMerge, op: 'conflicts' },
+  { id: 'audit', label: 'Audit Trail', icon: ScrollText, op: 'audit' },
+  { id: 'settings', label: 'Settings', icon: Settings, op: 'settings' },
 ];
 
 function statusBadge(status) {

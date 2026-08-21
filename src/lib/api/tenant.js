@@ -43,3 +43,55 @@ export function listLabWorklist(slug, params = {}) {
 export function listPayers(slug, params = {}) {
   return tenantRequest(slug, `/hmo/payers${buildQueryString({ per_page: 20, ...params })}`);
 }
+
+// ---- Phase 7–10 modules (admin parity build-out) ----
+
+export function listAdmissions(slug, params = {}) {
+  return tenantRequest(slug, `/ward/admissions${buildQueryString({ per_page: 20, ...params })}`);
+}
+
+export function wardCensus(slug) {
+  return tenantRequest(slug, "/ward/beds/census");
+}
+
+export function listMarOrders(slug, params = {}) {
+  return tenantRequest(slug, `/ward/mar/orders${buildQueryString({ per_page: 20, ...params })}`);
+}
+
+export function listJournalEntries(slug, params = {}) {
+  return tenantRequest(slug, `/finance/ledger/entries${buildQueryString({ per_page: 20, ...params })}`);
+}
+
+export function verifyLedger(slug) {
+  return tenantRequest(slug, "/finance/ledger/verify");
+}
+
+export function profitAndLoss(slug, params = {}) {
+  return tenantRequest(slug, `/finance/reports/profit-loss${buildQueryString(params)}`);
+}
+
+export function listRoles(slug, params = {}) {
+  return tenantRequest(slug, `/roles${buildQueryString({ per_page: 50, ...params })}`);
+}
+
+export function getSettings(slug) {
+  return tenantRequest(slug, "/settings");
+}
+
+export function getDashboard(slug, key = "executive") {
+  return tenantRequest(slug, `/analytics/dashboards/${key}`);
+}
+
+export function listSyncNodes(slug, params = {}) {
+  return tenantRequest(slug, `/sync/nodes${buildQueryString({ per_page: 20, ...params })}`);
+}
+
+export function listSyncConflicts(slug, params = {}) {
+  return tenantRequest(slug, `/sync/conflicts${buildQueryString({ per_page: 20, ...params })}`);
+}
+
+// ---- Audit trail (append-only; read-only endpoints by design) ----
+
+export function listAuditLogs(slug, params = {}) {
+  return tenantRequest(slug, `/audit-logs${buildQueryString({ per_page: 20, ...params })}`);
+}
