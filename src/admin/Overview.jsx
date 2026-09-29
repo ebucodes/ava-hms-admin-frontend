@@ -15,7 +15,11 @@ export default function Overview({ admin, companies, summary, loading, error, on
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
       {/* hero */}
-      <div style={{ borderRadius: 18, padding: '26px 28px', background: `linear-gradient(135deg, ${C.ink}, ${C.violet})`, color: '#fff' }}>
+      {/* Branding, not chrome: this banner stays a deep gradient with white text in BOTH
+          themes. Built from tokens it would inflate in dark mode — `C.ink` becomes
+          near-white — and a light hero at the top of a dark console reads as a rendering
+          bug rather than a choice. */}
+      <div style={{ borderRadius: 18, padding: '26px 28px', background: 'linear-gradient(135deg, #131a2e, #4b3aa8)', color: '#ffffff' }}>
         <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '.14em', opacity: 0.75 }}>PLATFORM CONSOLE</div>
         <h1 style={{ fontFamily: FONT.display, fontSize: 27, fontWeight: 800, margin: '12px 0 4px', letterSpacing: '-.03em' }}>
           Welcome{admin?.name ? `, ${admin.name.split(' ')[0]}` : ''}

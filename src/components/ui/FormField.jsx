@@ -2,7 +2,7 @@ import { C } from "../../theme/tokens.js";
 
 const baseInput = {
   width: "100%", padding: "9px 12px", borderRadius: 9, border: `1px solid ${C.border}`,
-  fontSize: 13, fontFamily: "inherit", boxSizing: "border-box", background: "#fff", color: C.ink,
+  fontSize: 13, fontFamily: "inherit", boxSizing: "border-box", background: C.onAccent, color: C.ink,
 };
 
 export function FormField({ label, error, children }) {

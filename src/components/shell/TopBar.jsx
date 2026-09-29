@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { Search, ChevronDown, Wifi, WifiOff, RefreshCw, Menu } from "lucide-react";
-import { C, FONT } from "../../theme/tokens.js";
+import { Search, ChevronDown, Wifi, WifiOff, RefreshCw, Menu, Sun, Moon, MonitorSmartphone } from "lucide-react";
+import { C, FONT, alpha, shadow } from "../../theme/tokens.js";
+import { useTheme } from "../../lib/hooks/ThemeContext.jsx";
 import { timeWithSeconds, greeting, firstName } from "../../lib/format.js";
 import { iconBtn } from "../ui/styles.js";
 
@@ -13,6 +14,7 @@ function TopBar({ onPalette, onMenuClick, title, sub, user, onLogout }) {
   const [sync, setSync] = useState("connected");
   const [clock, setClock] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
+  const { mode: themeMode, setMode: setThemeMode, resolved: resolvedTheme } = useTheme();
   
   useEffect(() => {
     const t = setInterval(() => setClock(timeWithSeconds(new Date())), 1000);
@@ -36,7 +38,7 @@ function TopBar({ onPalette, onMenuClick, title, sub, user, onLogout }) {
   return (
     <header className="ava-topbar" style={{
       height: 64, position: "sticky", top: 0, zIndex: 25, display: "flex", alignItems: "center",
-      gap: 16, padding: "0 22px", background: "rgba(255,255,255,.78)", backdropFilter: "blur(14px)",
+      gap: 16, padding: "0 22px", background: alpha(C.surface, 78), backdropFilter: "blur(14px)",
       borderBottom: `1px solid ${C.border}`,
     }}>
       <button onClick={onMenuClick} title="Menu" className="ava-hamburger" style={{ ...iconBtn, flexShrink: 0 }}>
@@ -63,7 +65,7 @@ function TopBar({ onPalette, onMenuClick, title, sub, user, onLogout }) {
       }} onMouseEnter={(e) => { e.currentTarget.style.background = C.border; }} onMouseLeave={(e) => { e.currentTarget.style.background = C.surface2; }}>
         <Search size={15} style={{ flexShrink: 0 }} />
         <span className="ava-topbar-search-label" style={{ fontSize: 13, flex: 1, textAlign: "left", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Search patients, orders, records…</span>
-        <kbd className="ava-topbar-search-kbd" style={{ fontFamily: FONT.mono, fontSize: 10.5, background: "#fff", border: `1px solid ${C.border}`, borderRadius: 6, padding: "2px 6px", color: C.ink3 }}>⌘K</kbd>
+        <kbd className="ava-topbar-search-kbd" style={{ fontFamily: FONT.mono, fontSize: 10.5, background: C.onAccent, border: `1px solid ${C.border}`, borderRadius: 6, padding: "2px 6px", color: C.ink3 }}>⌘K</kbd>
       </button>
 
       <div style={{ flex: 1 }} />
@@ -74,7 +76,7 @@ function TopBar({ onPalette, onMenuClick, title, sub, user, onLogout }) {
       </div>
 
       {/* sync */}
-      <div className="ava-topbar-sync" style={{ display: "flex", alignItems: "center", gap: 7, padding: "6px 11px", borderRadius: 10, background: syncMeta.c + "12" }}>
+      <div className="ava-topbar-sync" style={{ display: "flex", alignItems: "center", gap: 7, padding: "6px 11px", borderRadius: 10, background: alpha(syncMeta.c, 7) }}>
         <syncMeta.Icon size={14} color={syncMeta.c} className={sync === "syncing" ? "ava-spin" : ""} />
         <span className="ava-topbar-sync-label" style={{ fontSize: 12, fontWeight: 600, color: syncMeta.c }}>{syncMeta.label}</span>
       </div>
@@ -89,15 +91,43 @@ function TopBar({ onPalette, onMenuClick, title, sub, user, onLogout }) {
 
       <div style={{ position: "relative" }}>
         <button onClick={() => setMenuOpen((o) => !o)} style={{ display: "flex", alignItems: "center", gap: 7, padding: "4px 8px 4px 4px", borderRadius: 99, border: `1px solid ${C.border}`, cursor: "pointer", transition: ".16s", background: "transparent", transform: "scale(1)" }} onMouseEnter={(e) => { e.currentTarget.style.background = C.surface2; e.currentTarget.style.transform = "scale(1.05)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.transform = "scale(1)"; }}>
-          <div style={{ width: 28, height: 28, borderRadius: 99, background: `linear-gradient(135deg,${C.violet},${C.blue})`, display: "grid", placeItems: "center", color: "#fff", fontWeight: 700, fontSize: 11 }}>{initials(user?.name)}</div>
+          <div style={{ width: 28, height: 28, borderRadius: 99, background: `linear-gradient(135deg,${C.violet},${C.blue})`, display: "grid", placeItems: "center", color: C.onAccent, fontWeight: 700, fontSize: 11 }}>{initials(user?.name)}</div>
           <ChevronDown size={14} color={C.ink3} />
         </button>
         {menuOpen && (
-          <div style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, minWidth: 180, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, boxShadow: "0 8px 24px rgba(16,24,40,.12)", padding: 8, zIndex: 40 }}>
+          <div style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, minWidth: 180, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, boxShadow: shadow.pop, padding: 8, zIndex: 40 }}>
             <div style={{ padding: "6px 10px 10px", borderBottom: `1px solid ${C.borderSoft}`, marginBottom: 6 }}>
               <div style={{ fontSize: 13, fontWeight: 700, color: C.ink }}>{user?.name || "Unknown user"}</div>
               <div style={{ fontSize: 11.5, color: C.ink3 }}>{user?.email}</div>
             </div>
+            {/* Same three-state control as the customer portal, so an operator moving
+                between the two consoles finds it in the same place. */}
+            <div style={{ padding: "2px 4px 4px", fontSize: 10.5, fontWeight: 700, color: C.ink4, textTransform: "uppercase", letterSpacing: .5 }}>
+              Appearance
+            </div>
+            <div style={{ display: "flex", gap: 4, padding: "0 2px 8px", borderBottom: `1px solid ${C.borderSoft}`, marginBottom: 6 }}>
+              {[["light", "Light", Sun], ["dark", "Dark", Moon], ["system", "System", MonitorSmartphone]].map(([key, label, Icon]) => {
+                const on = themeMode === key;
+                return (
+                  <button
+                    key={key}
+                    onClick={() => setThemeMode(key)}
+                    title={key === "system" ? `Follow the device (currently ${resolvedTheme})` : label}
+                    style={{
+                      flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
+                      padding: "6px 4px", borderRadius: 9, cursor: "pointer",
+                      border: `1px solid ${on ? C.blue : C.border}`,
+                      background: on ? alpha(C.blue, 8) : "transparent",
+                      color: on ? C.blue : C.ink3, fontSize: 10, fontWeight: 700,
+                    }}
+                  >
+                    <Icon size={13} />
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+
             <button
               onClick={() => {
                 setMenuOpen(false);

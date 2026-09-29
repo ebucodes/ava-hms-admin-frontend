@@ -59,7 +59,7 @@ export function ConfirmProvider({ children }) {
           <button
             onClick={() => settle(true)}
             style={{
-              padding: '9px 18px', borderRadius: 10, border: 'none', fontSize: 13.5, fontWeight: 600, cursor: 'pointer', color: '#fff',
+              padding: '9px 18px', borderRadius: 10, border: 'none', fontSize: 13.5, fontWeight: 600, cursor: 'pointer', color: C.onAccent,
               fontFamily: FONT.body, background: confirmBg,
             }}
           >

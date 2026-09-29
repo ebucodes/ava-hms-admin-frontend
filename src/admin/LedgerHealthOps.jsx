@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { ShieldCheck, ShieldAlert, Scale } from 'lucide-react';
-import { C, FONT } from '@/src/theme/tokens.js';
+import { C, FONT, alpha } from '@/src/theme/tokens.js';
 import Card from '@/src/components/ui/Card.jsx';
 import { ApiError } from '@/src/lib/api/client.js';
 import { money, titleCase } from '@/src/lib/format.js';
@@ -62,7 +62,7 @@ export default function LedgerHealthOps({ slug }) {
             </div>
 
             {!intact && first && (
-              <div style={{ marginTop: 12, padding: '12px 14px', borderRadius: 11, background: C.red + '0d', border: `1px solid ${C.red}33` }}>
+              <div style={{ marginTop: 12, padding: '12px 14px', borderRadius: 11, background: C.red + '0d', border: `1px solid ${alpha(C.red, 20)}` }}>
                 <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.06em', color: C.red }}>FIRST BREAK</div>
                 <div style={{ fontFamily: FONT.mono, fontSize: 14, fontWeight: 700, color: C.ink, marginTop: 4 }}>
                   {first.entry_number || first.entry_id}

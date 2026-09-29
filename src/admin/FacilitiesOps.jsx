@@ -147,7 +147,7 @@ export default function FacilitiesOps({ slug }) {
   const right = (
     <button
       onClick={openNew}
-      style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 12px', borderRadius: 9, border: 'none', background: `linear-gradient(135deg, ${C.blue}, ${C.violet})`, color: '#fff', fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 12px', borderRadius: 9, border: 'none', background: `linear-gradient(135deg, ${C.blue}, ${C.violet})`, color: C.onAccent, fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}
     >
       <Plus size={14} /> Add branch
     </button>
@@ -230,7 +230,7 @@ export default function FacilitiesOps({ slug }) {
           <button
             type="submit"
             disabled={saving}
-            style={{ marginTop: 4, padding: '11px 18px', borderRadius: 10, border: 'none', background: `linear-gradient(135deg, ${C.blue}, ${C.violet})`, color: '#fff', fontSize: 14, fontWeight: 600, cursor: saving ? 'default' : 'pointer', opacity: saving ? 0.7 : 1 }}
+            style={{ marginTop: 4, padding: '11px 18px', borderRadius: 10, border: 'none', background: `linear-gradient(135deg, ${C.blue}, ${C.violet})`, color: C.onAccent, fontSize: 14, fontWeight: 600, cursor: saving ? 'default' : 'pointer', opacity: saving ? 0.7 : 1 }}
           >
             {saving ? 'Saving…' : editing === 'new' ? 'Create branch' : 'Save changes'}
           </button>

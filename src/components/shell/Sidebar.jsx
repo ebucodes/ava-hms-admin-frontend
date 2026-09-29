@@ -32,7 +32,7 @@ function Sidebar({ active, setActive, collapsed, setCollapsed, admin, mobileOpen
           background: `linear-gradient(135deg, ${C.ink}, ${C.violet})`, display: "grid", placeItems: "center",
           boxShadow: "0 4px 12px rgba(47,107,255,.35)",
         }}>
-          <Activity size={18} color="#fff" strokeWidth={2.6} />
+          <Activity size={18} color={C.onAccent} strokeWidth={2.6} />
         </div>
         {expanded && (
           <div style={{ overflow: "hidden" }}>
@@ -71,7 +71,7 @@ function Sidebar({ active, setActive, collapsed, setCollapsed, admin, mobileOpen
       {/* footer */}
       <div style={{ borderTop: `1px solid ${C.borderSoft}`, padding: 12 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, padding: expanded ? "2px 4px" : 0, justifyContent: expanded ? "flex-start" : "center" }}>
-          <div style={{ width: 32, height: 32, borderRadius: 99, background: `linear-gradient(135deg,${C.violet},${C.blue})`, display: "grid", placeItems: "center", color: "#fff", fontWeight: 700, fontSize: 12, flexShrink: 0 }}>{initials(admin?.name)}</div>
+          <div style={{ width: 32, height: 32, borderRadius: 99, background: `linear-gradient(135deg,${C.violet},${C.blue})`, display: "grid", placeItems: "center", color: C.onAccent, fontWeight: 700, fontSize: 12, flexShrink: 0 }}>{initials(admin?.name)}</div>
           {expanded && (
             <div style={{ flex: 1, overflow: "hidden" }}>
               <div style={{ fontSize: 12.5, fontWeight: 700, color: C.ink, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{admin?.name || "—"}</div>

@@ -79,7 +79,7 @@ function UpdateBanner() {
           onClick={() => window.location.reload()}
           style={{
             display: 'flex', alignItems: 'center', gap: 7, padding: '8px 14px',
-            borderRadius: 9, border: 'none', background: C.blue, color: '#fff',
+            borderRadius: 9, border: 'none', background: C.blue, color: C.onAccent,
             fontSize: 12.5, fontWeight: 600, cursor: 'pointer', flexShrink: 0,
           }}
         >

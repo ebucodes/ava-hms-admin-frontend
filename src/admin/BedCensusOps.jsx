@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { BedDouble } from 'lucide-react';
-import { C, FONT } from '@/src/theme/tokens.js';
+import { C, FONT, alpha } from '@/src/theme/tokens.js';
 import Card from '@/src/components/ui/Card.jsx';
 import { ApiError } from '@/src/lib/api/client.js';
 import { titleCase } from '@/src/lib/format.js';
@@ -60,7 +60,7 @@ export default function BedCensusOps({ slug }) {
           {Object.entries(census.by_status || {}).map(([status, count]) => {
             const color = STATUS_COLOR[status] || C.violet;
             return (
-              <div key={status} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '10px 12px', borderRadius: 10, background: color + '0d', border: `1px solid ${color}33` }}>
+              <div key={status} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '10px 12px', borderRadius: 10, background: color + '0d', border: `1px solid ${alpha(color, 20)}` }}>
                 <span style={{ fontSize: 12.5, fontWeight: 600, color: C.ink2 }}>{titleCase(status)}</span>
                 <span style={{ fontSize: 15, fontWeight: 800, color }}>{count}</span>
               </div>

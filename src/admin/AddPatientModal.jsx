@@ -72,7 +72,7 @@ export default function AddPatientModal({ open, slug, onClose, onSaved }) {
         <button
           type="submit"
           disabled={saving}
-          style={{ marginTop: 4, padding: '11px 18px', borderRadius: 10, border: 'none', background: `linear-gradient(135deg, ${C.blue}, ${C.violet})`, color: '#fff', fontSize: 14, fontWeight: 600, cursor: saving ? 'default' : 'pointer', opacity: saving ? 0.7 : 1 }}
+          style={{ marginTop: 4, padding: '11px 18px', borderRadius: 10, border: 'none', background: `linear-gradient(135deg, ${C.blue}, ${C.violet})`, color: C.onAccent, fontSize: 14, fontWeight: 600, cursor: saving ? 'default' : 'pointer', opacity: saving ? 0.7 : 1 }}
         >
           {saving ? 'Saving…' : 'Register patient'}
         </button>

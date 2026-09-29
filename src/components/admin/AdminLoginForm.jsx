@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { C, FONT } from '@/src/theme/tokens.js';
+import { C, FONT, alpha } from '@/src/theme/tokens.js';
 import { useToast } from '@/src/components/ui/Toast.jsx';
 import { useAdminAuth } from '@/src/lib/auth/AdminAuthContext.jsx';
 import { ApiError } from '@/src/lib/api/client.js';
@@ -18,7 +18,7 @@ const inputStyle = {
   fontFamily: 'inherit',
   transition: 'all 0.2s ease',
   boxSizing: 'border-box',
-  background: '#fff',
+  background: C.surface,
 };
 
 function Field({ label, type = 'text', ...props }) {
@@ -37,7 +37,7 @@ function Field({ label, type = 'text', ...props }) {
           style={{ ...inputStyle, paddingRight: isPassword ? 42 : 14 }}
           onFocus={(e) => {
             e.target.style.borderColor = C.blue;
-            e.target.style.boxShadow = `0 0 0 3px ${C.blue}12`;
+            e.target.style.boxShadow = `0 0 0 3px ${alpha(C.blue, 7)}`;
           }}
           onBlur={(e) => {
             e.target.style.borderColor = C.borderSoft;
@@ -113,7 +113,7 @@ export default function AdminLoginForm() {
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: '100vh',
-        background: `linear-gradient(135deg, ${C.ink}, ${C.violet}90)`,
+        background: `linear-gradient(135deg, ${C.ink}, ${alpha(C.violet, 56)})`,
         padding: 20,
       }}
     >
@@ -122,7 +122,7 @@ export default function AdminLoginForm() {
         style={{
           width: '100%',
           maxWidth: 420,
-          background: '#fff',
+          background: C.surface,
           borderRadius: 20,
           padding: 40,
           boxShadow: '0 10px 40px rgba(0,0,0,0.18)',
@@ -137,7 +137,7 @@ export default function AdminLoginForm() {
               background: `linear-gradient(135deg, ${C.ink}, ${C.violet})`,
               display: 'grid',
               placeItems: 'center',
-              color: '#fff',
+              color: C.onAccent,
               margin: '0 auto 20px',
             }}
           >
@@ -175,7 +175,7 @@ export default function AdminLoginForm() {
               borderRadius: 10,
               border: 'none',
               background: `linear-gradient(135deg, ${C.ink}, ${C.violet})`,
-              color: '#fff',
+              color: C.onAccent,
               fontSize: 14,
               fontWeight: 600,
               cursor: submitting ? 'default' : 'pointer',

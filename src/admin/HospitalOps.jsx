@@ -584,7 +584,7 @@ export default function HospitalOps({ slug, op }) {
         key={f.key}
         value={filters[f.key] ?? ''}
         onChange={(e) => applyFilter(f.key, e.target.value)}
-        style={{ padding: '6px 9px', borderRadius: 8, border: `1px solid ${C.border}`, background: '#fff', fontSize: 12, color: C.ink2, cursor: 'pointer' }}
+        style={{ padding: '6px 9px', borderRadius: 8, border: `1px solid ${C.border}`, background: C.surface, fontSize: 12, color: C.ink2, cursor: 'pointer' }}
       >
         <option value="">{f.label}</option>
         {(f.options || []).map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
@@ -597,7 +597,7 @@ export default function HospitalOps({ slug, op }) {
       {filterControls}
       <button
         onClick={() => setAdding(true)}
-        style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 12px', borderRadius: 9, border: 'none', background: `linear-gradient(135deg, ${C.blue}, ${C.violet})`, color: '#fff', fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}
+        style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 12px', borderRadius: 9, border: 'none', background: `linear-gradient(135deg, ${C.blue}, ${C.violet})`, color: C.onAccent, fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}
       >
         <Plus size={14} /> Add patient
       </button>
