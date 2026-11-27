@@ -13,9 +13,38 @@ export const titleCase = (s) =>
         .trim()
         .replace(/\b\w/g, (m) => m.toUpperCase());
 
-/** Naira amount for display. Null/empty renders an em dash, never ₦0 — a missing
- *  figure and a zero figure mean different things on a bill. */
-export const money = (v) => (v == null || v === "" ? "—" : `₦${Number(v).toLocaleString()}`);
+/*
+ * Numbers — the single source of truth for how a figure is written, in both portals.
+ *
+ * Every count, quantity, total and amount renders with thousands separators: 44833 →
+ * "44,833". The locale is pinned (en-GB) for the same reason the dates are: passing
+ * `undefined` formats against the viewer's browser, so the same figure read "44,833" on
+ * one machine, "44.833" on another and "44833" on a third. Use these helpers instead of
+ * printing a number raw or calling toLocaleString() at the call site.
+ */
+const NUMBER_LOCALE = "en-GB";
+
+/**
+ * A number for display: 44833 → "44,833", 1234.5 → "1,234.5", 0.0125 → "0.0125".
+ * Null/blank → "—" (a missing figure is not zero). Pass `decimals` to fix the places.
+ */
+export function formatNumber(v, { decimals } = {}) {
+  if (v === null || v === undefined || v === "") return "—";
+  const n = Number(v);
+  if (!Number.isFinite(n)) return String(v);
+  return n.toLocaleString(NUMBER_LOCALE, decimals == null
+    ? { maximumFractionDigits: 10 }
+    : { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+}
+
+/** Naira money format: 1234.5 → "₦1,234.50". Null/blank → "—". */
+export function money(v) {
+  if (v == null || v === "") return "—";
+  const n = Number(v);
+  if (Number.isNaN(n)) return "—";
+  return `₦${formatNumber(n, { decimals: 2 })}`;
+}
+
 
 /*
  * Date & time display — the single source of truth for both apps.
@@ -152,7 +181,7 @@ export function duration(seconds) {
   const mins = Math.floor(s / 60);
   if (mins < 60) return `${mins}m`;
 
-  const hours = Math.floor(mins / 60);
+  const hours = formatNumber(Math.floor(mins / 60));
   const rest = mins % 60;
   return rest ? `${hours}h ${rest}m` : `${hours}h`;
 }

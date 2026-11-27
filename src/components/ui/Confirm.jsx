@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
-import { C, FONT } from '@/src/theme/tokens.js';
+import { C, FONT, alpha } from '@/src/theme/tokens.js';
 import Modal from '@/src/components/ui/Modal.jsx';
 
 const ConfirmContext = createContext(null);
@@ -42,7 +42,7 @@ export function ConfirmProvider({ children }) {
       {children}
       <Modal open={!!state} onClose={() => settle(false)} title={o.title || 'Are you sure?'} width={o.width || 440}>
         <div style={{ display: 'flex', gap: 14 }}>
-          <div style={{ width: 38, height: 38, flexShrink: 0, borderRadius: 10, background: accent + '14', display: 'grid', placeItems: 'center' }}>
+          <div style={{ width: 38, height: 38, flexShrink: 0, borderRadius: 10, background: alpha(accent, 8), display: 'grid', placeItems: 'center' }}>
             <AlertTriangle size={19} color={accent} />
           </div>
           <p style={{ margin: 0, fontSize: 13.5, color: C.ink2, lineHeight: 1.55 }}>

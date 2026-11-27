@@ -2,7 +2,7 @@
 
 import { Building2, ChevronRight, Plus } from 'lucide-react';
 import Link from 'next/link';
-import { C, FONT } from '@/src/theme/tokens.js';
+import { C, FONT, alpha } from '@/src/theme/tokens.js';
 import { td } from '@/src/components/ui/styles.js';
 import TableShell from '@/src/components/data/TableShell.jsx';
 import Badge from '@/src/components/ui/Badge.jsx';
@@ -40,7 +40,7 @@ export default function HospitalsView({ companies, summary, meta, loading, error
               <div style={{ fontWeight: 700, color: C.ink }}>{c.name}</div>
               <div style={{ fontSize: 11.5, color: C.ink3, fontFamily: FONT.mono, marginTop: 2 }}>{c.slug}</div>
             </td>
-            <td style={td}><Badge color={STATUS_COLOR[c.status] || C.ink3} bg={(STATUS_COLOR[c.status] || C.ink3) + '14'} dot>{upper(c.status)}</Badge></td>
+            <td style={td}><Badge color={STATUS_COLOR[c.status] || C.ink3} bg={alpha(STATUS_COLOR[c.status] || C.ink3, 8)} dot>{upper(c.status)}</Badge></td>
             <td style={td}>{c.facilities_count ?? '—'}</td>
             <td style={td}>{c.users_count ?? '—'}</td>
             <td style={{ ...td, textAlign: 'right' }}><ChevronRight size={16} color={C.ink3} /></td>

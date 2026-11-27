@@ -47,7 +47,7 @@ export default function LedgerHealthOps({ slug }) {
       {/* Hash-chain verdict */}
       <Card pad={18}>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 13 }}>
-          <div style={{ width: 40, height: 40, borderRadius: 11, background: tone + '15', display: 'grid', placeItems: 'center', flexShrink: 0 }}>
+          <div style={{ width: 40, height: 40, borderRadius: 11, background: alpha(tone, 8), display: 'grid', placeItems: 'center', flexShrink: 0 }}>
             {intact ? <ShieldCheck size={20} color={tone} /> : <ShieldAlert size={20} color={tone} />}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>

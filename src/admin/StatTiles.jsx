@@ -1,8 +1,9 @@
 'use client';
 
 import { Hospital, CheckCircle2, Network, Users } from 'lucide-react';
-import { C, FONT } from '@/src/theme/tokens.js';
+import { C, FONT, alpha } from '@/src/theme/tokens.js';
 import Card from '@/src/components/ui/Card.jsx';
+import { formatNumber } from '@/src/lib/format.js';
 
 /** Overview stat tiles — same template as the customer Dashboard tiles. Prefers
  *  the platform-wide `summary` (whole platform); falls back to the current page. */
@@ -27,13 +28,13 @@ export default function StatTiles({ companies, summary, loading, error }) {
       {tiles.map(([label, value, color, Icon], i) => (
         <Card key={label} delay={i * 50} pad={15}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 10 }}>
-            <div style={{ width: 30, height: 30, borderRadius: 8, background: color + '15', display: 'grid', placeItems: 'center' }}>
+            <div style={{ width: 30, height: 30, borderRadius: 8, background: alpha(color, 8), display: 'grid', placeItems: 'center' }}>
               <Icon size={15} color={color} />
             </div>
             <span style={{ fontSize: 12, color: C.ink3, fontWeight: 600 }}>{label}</span>
           </div>
           <div style={{ fontFamily: FONT.display, fontSize: 24, fontWeight: 800, color: C.ink }}>
-            {loading || error ? '—' : value}
+            {loading || error ? '—' : formatNumber(value)}
           </div>
         </Card>
       ))}

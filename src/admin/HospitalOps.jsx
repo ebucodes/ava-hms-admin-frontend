@@ -553,7 +553,7 @@ export default function HospitalOps({ slug, op }) {
     );
     setFilters(initial);
     if (cfg && !CUSTOM_OPS[op]) reload(1, initial);
-  }, [slug, op]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [slug, op]); // deps deliberately narrower (no react-hooks lint plugin here)
 
   // Applying a filter restarts at page 1 — page 3 of the unfiltered list is not
   // page 3 of the filtered one.

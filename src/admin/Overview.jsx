@@ -1,7 +1,7 @@
 'use client';
 
 import { ChevronRight } from 'lucide-react';
-import { C, FONT } from '@/src/theme/tokens.js';
+import { C, FONT, alpha } from '@/src/theme/tokens.js';
 import Card from '@/src/components/ui/Card.jsx';
 import Badge from '@/src/components/ui/Badge.jsx';
 import StatTiles, { STATUS_COLOR } from '@/src/admin/StatTiles.jsx';
@@ -54,7 +54,7 @@ export default function Overview({ admin, companies, summary, loading, error, on
             >
               <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span style={{ fontSize: 13.5, fontWeight: 700, color: C.ink }}>{c.name}</span>
-                <Badge color={STATUS_COLOR[c.status] || C.ink3} bg={(STATUS_COLOR[c.status] || C.ink3) + '14'} dot>{upper(c.status)}</Badge>
+                <Badge color={STATUS_COLOR[c.status] || C.ink3} bg={alpha(STATUS_COLOR[c.status] || C.ink3, 8)} dot>{upper(c.status)}</Badge>
               </span>
               <ChevronRight size={16} color={C.ink3} />
             </button>

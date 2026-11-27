@@ -1,6 +1,6 @@
 'use client';
 
-import { C } from '@/src/theme/tokens.js';
+import { C, alpha } from '@/src/theme/tokens.js';
 import Badge from '@/src/components/ui/Badge.jsx';
 import { STATUS_COLOR } from '@/src/admin/StatTiles.jsx';
 import { upper } from '@/src/lib/format.js';
@@ -14,5 +14,5 @@ import { upper } from '@/src/lib/format.js';
 export default function StatusPill({ status }) {
   const color = STATUS_COLOR[status] || C.violet;
 
-  return <Badge color={color} bg={color + '14'} dot>{upper(status)}</Badge>;
+  return <Badge color={color} bg={alpha(color, 8)} dot>{upper(status)}</Badge>;
 }

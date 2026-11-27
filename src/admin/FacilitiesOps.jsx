@@ -57,7 +57,7 @@ export default function FacilitiesOps({ slug }) {
       ));
   };
 
-  useEffect(reload, [slug]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(reload, [slug]); // deps deliberately narrower (no react-hooks lint plugin here)
 
   const openNew = () => { setForm(EMPTY); setErrors({}); setEditing('new'); };
   const openEdit = (f) => {

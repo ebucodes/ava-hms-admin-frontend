@@ -84,7 +84,7 @@ export default function SettingsOps({ slug }) {
         {Object.entries(integrations).map(([module, cfg]) => (
           <div key={module} style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', padding: '10px 0', borderTop: `1px solid ${C.borderSoft}` }}>
             <span style={{ fontWeight: 700, fontSize: 13, color: C.ink, minWidth: 90 }}>{titleCase(module)}</span>
-            <Badge color={cfg.enabled ? C.emerald : C.ink3} bg={(cfg.enabled ? C.emerald : C.ink3) + '14'} dot>
+            <Badge color={cfg.enabled ? C.emerald : C.ink3} bg={alpha(cfg.enabled ? C.emerald : C.ink3, 8)} dot>
               {cfg.enabled ? 'Enabled' : 'Disabled'}
             </Badge>
             {cfg.url && <span style={{ fontFamily: FONT.mono, fontSize: 11.5, color: C.ink2 }}>{cfg.url}</span>}

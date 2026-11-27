@@ -3,17 +3,55 @@
   "parserOptions": {
     "ecmaVersion": 2023,
     "sourceType": "module",
-    "ecmaFeatures": { "jsx": true }
+    "ecmaFeatures": {
+      "jsx": true
+    }
   },
-  "env": { "browser": true, "es2023": true, "node": true },
-  "ignorePatterns": ["node_modules/", ".next/", "out/", "public/"],
+  "env": {
+    "browser": true,
+    "es2023": true,
+    "node": true
+  },
+  "ignorePatterns": [
+    "node_modules/",
+    ".next/",
+    "out/",
+    "public/"
+  ],
   "rules": {
     "no-restricted-syntax": [
       "error",
       {
         "selector": "BinaryExpression[operator='+'][left.object.name='C'][right.value=/^[0-9a-fA-F]{2}$/]",
-        "message": "Do not append a hex alpha byte to a design token. The tokens in theme/tokens.js are `var(--ava-*)` strings, so `C.red + '14'` produces the literal \"var(--ava-red)14\" — not a colour, so the browser drops the declaration silently and the tint never renders. Use alpha(C.red, 8) instead, which also makes the tint follow light/dark. See QA-RETEST.md round 13."
+        "message": "Do not append a hex alpha byte to a design token. The tokens in theme/tokens.js are `var(--ava-*)` strings, so `C.red + '14'` produces the literal \"var(--ava-red)14\" \u2014 not a colour, so the browser drops the declaration silently and the tint never renders. Use alpha(C.red, 8) instead, which also makes the tint follow light/dark. See QA-RETEST.md round 13."
+      },
+      {
+        "selector": "BinaryExpression[operator='+'][left.type='ConditionalExpression'][right.value=/^[0-9a-fA-F]{2}$/]",
+        "message": "Do not append a hex alpha byte to a design token. The tokens in theme/tokens.js are `var(--ava-*)` strings, so `C.red + '14'` produces the literal \"var(--ava-red)14\" \u2014 not a colour, so the browser drops the declaration silently and the tint never renders. Use alpha(C.red, 8) instead, which also makes the tint follow light/dark. See QA-RETEST.md round 13."
+      },
+      {
+        "selector": "CallExpression[callee.property.name='toLocaleString']",
+        "message": "Format numbers with formatNumber() / money() from lib/format.js, not toLocaleString(). They pin the locale so every figure reads 44,833 on every machine (round 28)."
+      },
+      {
+        "selector": "BinaryExpression[operator='+'][left.type='Identifier'][right.value=/^[0-9a-fA-F]{2}$/]",
+        "message": "Do not append a hex alpha byte to a colour variable: if it holds a design token (`var(--ava-*)`) the result is not a colour and the tint never renders. Use alpha(color, pct) from theme/tokens.js (round 28)."
+      },
+      {
+        "selector": "BinaryExpression[operator='+'][left.type!='Literal'][right.value=/^[0-9a-fA-F]{2}$/]",
+        "message": "Do not append a hex alpha byte to a colour (any expression + '14'): design tokens are `var(--ava-*)` strings, so the result is not a colour and the tint never renders. Use alpha(color, pct) from theme/tokens.js (round 28)."
       }
-    ]
-  }
+    ],
+    "no-undef": "error"
+  },
+  "overrides": [
+    {
+      "files": [
+        "src/lib/format.js"
+      ],
+      "rules": {
+        "no-restricted-syntax": "off"
+      }
+    }
+  ]
 }

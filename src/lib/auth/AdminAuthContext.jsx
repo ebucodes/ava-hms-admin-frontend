@@ -64,7 +64,7 @@ export function AdminAuthProvider({ children }) {
     })();
 
     return clearRefreshTimer;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Deps deliberately narrower than the closure (no react-hooks lint plugin here).
   }, []);
 
   const login = useCallback(async (email, password) => {

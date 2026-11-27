@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { formatNumber, money } from '@/src/lib/format.js';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { C, FONT } from '@/src/theme/tokens.js';
 import Card from '@/src/components/ui/Card.jsx';
@@ -21,12 +22,12 @@ function formatValue(metric) {
   const v = metric.value;
   if (v == null) return '—';
   switch (metric.unit) {
-    case 'currency': return `₦${Number(v).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-    case 'percent': return `${Number(v).toFixed(1)}%`;
-    case 'minutes': return `${Number(v).toFixed(0)} min`;
-    case 'hours': return `${Number(v).toFixed(1)} h`;
-    case 'days': return `${Number(v).toFixed(1)} d`;
-    default: return Number(v).toLocaleString();
+    case 'currency': return money(v);
+    case 'percent': return `${formatNumber(v, { decimals: 1 })}%`;
+    case 'minutes': return `${formatNumber(v, { decimals: 0 })} min`;
+    case 'hours': return `${formatNumber(v, { decimals: 1 })} h`;
+    case 'days': return `${formatNumber(v, { decimals: 1 })} d`;
+    default: return formatNumber(v);
   }
 }
 
@@ -38,7 +39,7 @@ function Delta({ metric }) {
   const color = diff > 0 ? C.emerald : diff < 0 ? C.red : C.ink3;
   return (
     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 11, fontWeight: 700, color }}>
-      <Icon size={12} /> {diff === 0 ? 'flat' : `${diff > 0 ? '+' : ''}${Number(diff).toLocaleString()}`}
+      <Icon size={12} /> {diff === 0 ? 'flat' : `${diff > 0 ? '+' : ''}${formatNumber(diff)}`}
     </span>
   );
 }

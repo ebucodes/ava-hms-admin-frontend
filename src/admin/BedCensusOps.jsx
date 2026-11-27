@@ -41,7 +41,7 @@ export default function BedCensusOps({ slug }) {
         {tiles.map(([label, value, color]) => (
           <Card key={label} pad={16}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 8 }}>
-              <div style={{ width: 28, height: 28, borderRadius: 8, background: color + '15', display: 'grid', placeItems: 'center' }}>
+              <div style={{ width: 28, height: 28, borderRadius: 8, background: alpha(color, 8), display: 'grid', placeItems: 'center' }}>
                 <BedDouble size={14} color={color} />
               </div>
               <span style={{ fontSize: 12, color: C.ink3, fontWeight: 600 }}>{label}</span>
@@ -60,7 +60,7 @@ export default function BedCensusOps({ slug }) {
           {Object.entries(census.by_status || {}).map(([status, count]) => {
             const color = STATUS_COLOR[status] || C.violet;
             return (
-              <div key={status} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '10px 12px', borderRadius: 10, background: color + '0d', border: `1px solid ${alpha(color, 20)}` }}>
+              <div key={status} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '10px 12px', borderRadius: 10, background: alpha(color, 5), border: `1px solid ${alpha(color, 20)}` }}>
                 <span style={{ fontSize: 12.5, fontWeight: 600, color: C.ink2 }}>{titleCase(status)}</span>
                 <span style={{ fontSize: 15, fontWeight: 800, color }}>{count}</span>
               </div>

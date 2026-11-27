@@ -42,7 +42,7 @@ export default function ReceivablesAgingOps({ slug }) {
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: 10, marginTop: 14 }}>
           {BUCKETS.map((b) => (
-            <div key={b} style={{ padding: '10px 12px', borderRadius: 10, background: BUCKET_COLOR[b] + '0d', border: `1px solid ${BUCKET_COLOR[b]}33` }}>
+            <div key={b} style={{ padding: '10px 12px', borderRadius: 10, background: alpha(BUCKET_COLOR[b], 5), border: `1px solid ${BUCKET_COLOR[b]}33` }}>
               <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '.05em', color: BUCKET_COLOR[b] }}>
                 {b === 'current' ? 'CURRENT' : `${b} DAYS`}
               </div>

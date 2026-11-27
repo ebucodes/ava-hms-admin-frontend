@@ -7,7 +7,7 @@
     "dev": "next dev --webpack -H 127.0.0.1 -p 5175",
     "build": "next build",
     "start": "next start -H 127.0.0.1 -p 5175",
-    "lint": "eslint src",
+    "lint": "eslint src --ext .js,.jsx",
     "prebuild": "npm run lint && node scripts/write-build-version.mjs"
   },
   "dependencies": {

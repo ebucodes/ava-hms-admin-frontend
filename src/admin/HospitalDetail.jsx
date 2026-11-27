@@ -9,7 +9,7 @@ import {
   ShieldAlert, LineChart, Hourglass, FileText, AlertTriangle, Coins, PieChart, Layers, BookLock,
   Users2, Link2,
 } from 'lucide-react';
-import { C, FONT } from '@/src/theme/tokens.js';
+import { C, FONT, alpha } from '@/src/theme/tokens.js';
 import { useToast } from '@/src/components/ui/Toast.jsx';
 import { useConfirm } from '@/src/components/ui/Confirm.jsx';
 import Card from '@/src/components/ui/Card.jsx';
@@ -79,7 +79,7 @@ const CTA_GROUPS = [
 
 function statusBadge(status) {
   const color = STATUS_COLOR[status] || C.ink3;
-  return <Badge color={color} bg={color + '14'} dot>{upper(status)}</Badge>;
+  return <Badge color={color} bg={alpha(color, 8)} dot>{upper(status)}</Badge>;
 }
 
 /** Single-hospital detail: read the tenant, edit its profile, flip status, and
