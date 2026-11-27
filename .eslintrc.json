@@ -42,7 +42,15 @@
         "message": "Do not append a hex alpha byte to a colour (any expression + '14'): design tokens are `var(--ava-*)` strings, so the result is not a colour and the tint never renders. Use alpha(color, pct) from theme/tokens.js (round 28)."
       }
     ],
-    "no-undef": "error"
+    "no-undef": "error",
+    "no-use-before-define": [
+      "error",
+      {
+        "functions": false,
+        "classes": true,
+        "variables": false
+      }
+    ]
   },
   "overrides": [
     {
