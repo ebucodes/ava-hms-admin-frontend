@@ -14,6 +14,11 @@
  *
  * The consequence is that you can no longer concatenate an alpha suffix onto a token —
  * `C.blue + "14"` would produce `var(--ava-blue)14`, which is not a colour. Use `alpha()`.
+ *
+ * This paragraph used to be the only thing stopping it, and twenty-three call sites
+ * ignored it — silently, because the browser just drops an invalid declaration. It is now
+ * a lint error (`no-restricted-syntax` in .eslintrc.json) and `npm run build` runs the
+ * linter first, so the idiom cannot reach a build.
  */
 export const C = {
   bg: "var(--ava-bg)",

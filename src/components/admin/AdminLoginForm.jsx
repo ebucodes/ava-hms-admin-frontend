@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Eye, EyeOff, ShieldCheck } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { C, FONT, alpha } from '@/src/theme/tokens.js';
 import { useToast } from '@/src/components/ui/Toast.jsx';
@@ -129,19 +129,18 @@ export default function AdminLoginForm() {
         }}
       >
         <div style={{ marginBottom: 32, textAlign: 'center' }}>
-          <div
-            style={{
-              width: 56,
-              height: 56,
-              borderRadius: 14,
-              background: `linear-gradient(135deg, ${C.ink}, ${C.violet})`,
-              display: 'grid',
-              placeItems: 'center',
-              color: C.onAccent,
-              margin: '0 auto 20px',
-            }}
-          >
-            <ShieldCheck size={26} />
+          {/* The AVA Health wordmark, shared with the marketing site (website/public/ava-logo.png).
+              On a white plate: the mark's ink is dark navy and teal, which all but
+              disappears against the dark-theme card surface (#131926). */}
+          <div style={{
+            display: 'inline-flex', padding: '10px 16px', borderRadius: 14,
+            background: '#ffffff', margin: '0 auto 20px',
+          }}>
+            <img
+              src="/ava-logo.png"
+              alt="AVA Health"
+              style={{ height: 56, width: 'auto', objectFit: 'contain', display: 'block' }}
+            />
           </div>
           <h1 style={{ fontFamily: FONT.display, fontSize: 24, fontWeight: 800, color: C.ink, margin: 0 }}>
             System Administration

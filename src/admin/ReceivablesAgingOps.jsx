@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { C, FONT } from '@/src/theme/tokens.js';
+import { C, FONT, alpha } from '@/src/theme/tokens.js';
 import Card from '@/src/components/ui/Card.jsx';
 import Badge from '@/src/components/ui/Badge.jsx';
 import { ApiError } from '@/src/lib/api/client.js';
@@ -77,7 +77,7 @@ export default function ReceivablesAgingOps({ slug }) {
                   <td style={{ padding: '13px 18px', borderBottom: `1px solid ${C.borderSoft}` }}>
                     {/* halt_credit is the hospital's own decision to stop extending cover
                         to this payer — the single most consequential flag on the row. */}
-                    {p.halt_credit && <Badge color={C.red} bg={C.red + '14'} dot>CREDIT HALTED</Badge>}
+                    {p.halt_credit && <Badge color={C.red} bg={alpha(C.red, 8)} dot>CREDIT HALTED</Badge>}
                   </td>
                 </tr>
               ))}

@@ -1,4 +1,4 @@
-import { ChevronRight, ChevronLeft, Activity } from "lucide-react";
+import { ChevronRight, ChevronLeft } from "lucide-react";
 import { C, FONT } from "../../theme/tokens.js";
 import { NAV } from "../../data/nav.js";
 import { titleCase } from "../../lib/format.js";
@@ -27,12 +27,20 @@ function Sidebar({ active, setActive, collapsed, setCollapsed, admin, mobileOpen
     >
       {/* brand */}
       <div style={{ height: 64, display: "flex", alignItems: "center", gap: 11, padding: "0 18px", borderBottom: `1px solid ${C.borderSoft}` }}>
+        {/* The AVA mark, shared with the marketing site (website/public/favicon.png).
+            It sits on a white chip because the mark's ink is dark navy and teal: against
+            the dark-theme sidebar (#131926) it reads at only 2.2:1 on its own. The chip
+            keeps the brand colours intact instead of needing a knockout variant. */}
         <div style={{
-          width: 34, height: 34, borderRadius: 10, flexShrink: 0,
-          background: `linear-gradient(135deg, ${C.ink}, ${C.violet})`, display: "grid", placeItems: "center",
-          boxShadow: "0 4px 12px rgba(47,107,255,.35)",
+          width: 34, height: 34, borderRadius: 10, flexShrink: 0, padding: 3,
+          background: "#ffffff", display: "grid", placeItems: "center",
+          boxShadow: "0 2px 8px rgba(0,0,0,.18)", boxSizing: "border-box",
         }}>
-          <Activity size={18} color={C.onAccent} strokeWidth={2.6} />
+          <img
+            src="/ava-mark.png"
+            alt="AVA Health"
+            style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+          />
         </div>
         {expanded && (
           <div style={{ overflow: "hidden" }}>

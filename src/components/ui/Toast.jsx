@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { X, AlertCircle, CheckCircle2 } from 'lucide-react';
-import { C } from '../../theme/tokens.js';
+import { C, alpha } from '../../theme/tokens.js';
 
 export const ToastContext = React.createContext();
 
@@ -78,19 +78,19 @@ function Toast({ id, message, type, onRemove }) {
 
   const typeStyles = {
     success: {
-      bg: C.emerald + '12',
+      bg: alpha(C.emerald, 7),
       border: C.emerald,
       text: C.emerald,
       icon: CheckCircle2,
     },
     error: {
-      bg: C.red + '12',
+      bg: alpha(C.red, 7),
       border: C.red,
       text: C.red,
       icon: AlertCircle,
     },
     info: {
-      bg: C.blue + '12',
+      bg: alpha(C.blue, 7),
       border: C.blue,
       text: C.blue,
       icon: AlertCircle,

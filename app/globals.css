@@ -26,22 +26,31 @@
   --ava-ink-3: #8b94a8;
   --ava-ink-4: #aab1c2;
 
-  --ava-blue: #2f6bff;
-  --ava-blue-deep: #1c46c7;
-  --ava-blue-soft: #eef3ff;
-  --ava-blue-mid: #dce6ff;
+  /* Primary accent = AVA Health brand teal, sampled from the logo (website/tailwind.config
+     brand-600/800/50/100). Replaces the generic #2f6bff: the console is the platform
+     owner's face of the brand, so the accent is the brand's, not a stock blue. The token
+     is still named `blue` because ~90 call sites use that name; renaming it is a separate,
+     mechanical change. */
+  --ava-blue: #0f6b68;
+  --ava-blue-deep: #0b4644;
+  --ava-blue-soft: #ecf6f5;
+  --ava-blue-mid: #d2ebe9;
 
   --ava-emerald: #0eb47b;
   --ava-emerald-soft: #e4f7f0;
 
-  --ava-amber: #f3a118;
-  --ava-amber-soft: #fdf2df;
+  /* Brand gold (gold-600/100). Also a legibility win: the old #f3a118 sat at 2.1:1 on
+     white, this reads 3.9:1. */
+  --ava-amber: #a57a2f;
+  --ava-amber-soft: #f8edd0;
 
   --ava-red: #e5484d;
   --ava-red-soft: #fdecec;
 
-  --ava-violet: #7b5cff;
-  --ava-violet-soft: #efeaff;
+  /* Brand navy (navy-700/50). Paired with the teal above it forms the primary button
+     gradient, which is the logo's own navy-to-teal move. */
+  --ava-violet: #1b2a5e;
+  --ava-violet-soft: #eef1f8;
 
   --ava-cyan: #0bbcd6;
   --ava-cyan-soft: #e2f8fb;
@@ -84,22 +93,22 @@
     --ava-ink-3: #7c8699;
     --ava-ink-4: #5d6678;
 
-    --ava-blue: #5b8cff;
-    --ava-blue-deep: #7ea6ff;
-    --ava-blue-soft: #16203a;
-    --ava-blue-mid: #1d2b4d;
+    --ava-blue: #45b3ad;
+    --ava-blue-deep: #6ccbc5;
+    --ava-blue-soft: #0c2422;
+    --ava-blue-mid: #12332f;
 
     --ava-emerald: #2ecf95;
     --ava-emerald-soft: #0e2a22;
 
-    --ava-amber: #f7b43f;
-    --ava-amber-soft: #2c2113;
+    --ava-amber: #d9ab55;
+    --ava-amber-soft: #2a2213;
 
     --ava-red: #ff6b6f;
     --ava-red-soft: #2d1618;
 
-    --ava-violet: #9b81ff;
-    --ava-violet-soft: #201a3a;
+    --ava-violet: #8fa3e0;
+    --ava-violet-soft: #161c33;
 
     --ava-cyan: #34cfe4;
     --ava-cyan-soft: #0d2a30;
@@ -134,22 +143,22 @@
   --ava-ink-3: #7c8699;
   --ava-ink-4: #5d6678;
 
-  --ava-blue: #5b8cff;
-  --ava-blue-deep: #7ea6ff;
-  --ava-blue-soft: #16203a;
-  --ava-blue-mid: #1d2b4d;
+  --ava-blue: #45b3ad;
+  --ava-blue-deep: #6ccbc5;
+  --ava-blue-soft: #0c2422;
+  --ava-blue-mid: #12332f;
 
   --ava-emerald: #2ecf95;
   --ava-emerald-soft: #0e2a22;
 
-  --ava-amber: #f7b43f;
-  --ava-amber-soft: #2c2113;
+  --ava-amber: #d9ab55;
+  --ava-amber-soft: #2a2213;
 
   --ava-red: #ff6b6f;
   --ava-red-soft: #2d1618;
 
-  --ava-violet: #9b81ff;
-  --ava-violet-soft: #201a3a;
+  --ava-violet: #8fa3e0;
+  --ava-violet-soft: #161c33;
 
   --ava-cyan: #34cfe4;
   --ava-cyan-soft: #0d2a30;

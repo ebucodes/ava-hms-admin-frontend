@@ -1,0 +1,19 @@
+{
+  "root": true,
+  "parserOptions": {
+    "ecmaVersion": 2023,
+    "sourceType": "module",
+    "ecmaFeatures": { "jsx": true }
+  },
+  "env": { "browser": true, "es2023": true, "node": true },
+  "ignorePatterns": ["node_modules/", ".next/", "out/", "public/"],
+  "rules": {
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "BinaryExpression[operator='+'][left.object.name='C'][right.value=/^[0-9a-fA-F]{2}$/]",
+        "message": "Do not append a hex alpha byte to a design token. The tokens in theme/tokens.js are `var(--ava-*)` strings, so `C.red + '14'` produces the literal \"var(--ava-red)14\" — not a colour, so the browser drops the declaration silently and the tint never renders. Use alpha(C.red, 8) instead, which also makes the tint follow light/dark. See QA-RETEST.md round 13."
+      }
+    ]
+  }
+}

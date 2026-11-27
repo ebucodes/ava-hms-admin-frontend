@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Plus, Star, Pencil, Trash2 } from 'lucide-react';
-import { C, FONT } from '@/src/theme/tokens.js';
+import { C, FONT, alpha } from '@/src/theme/tokens.js';
 import { td } from '@/src/components/ui/styles.js';
 import TableShell from '@/src/components/data/TableShell.jsx';
 import Badge from '@/src/components/ui/Badge.jsx';
@@ -164,7 +164,7 @@ export default function FacilitiesOps({ slug }) {
               <td style={td}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
                   <span style={{ fontWeight: 700, color: C.ink }}>{f.name}</span>
-                  {f.is_main && <Badge color={C.amber} bg={C.amber + '14'} dot>MAIN</Badge>}
+                  {f.is_main && <Badge color={C.amber} bg={alpha(C.amber, 8)} dot>MAIN</Badge>}
                 </div>
                 <div style={{ fontSize: 11, color: C.ink3, fontFamily: FONT.mono }}>{f.slug}</div>
                 {f.address && <div style={{ fontSize: 11, color: C.ink3 }}>{f.address}</div>}

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Users } from 'lucide-react';
-import { C, FONT } from '@/src/theme/tokens.js';
+import { C, FONT, alpha } from '@/src/theme/tokens.js';
 import Card from '@/src/components/ui/Card.jsx';
 import Badge from '@/src/components/ui/Badge.jsx';
 import { ApiError } from '@/src/lib/api/client.js';
@@ -46,13 +46,13 @@ export default function MpiCandidatesOps({ slug }) {
       {groups.map((g, i) => (
         <Card key={`${g.match_reason}-${i}`} pad={18}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 12 }}>
-            <div style={{ width: 30, height: 30, borderRadius: 8, background: C.amber + '15', display: 'grid', placeItems: 'center' }}>
+            <div style={{ width: 30, height: 30, borderRadius: 8, background: alpha(C.amber, 8), display: 'grid', placeItems: 'center' }}>
               <Users size={15} color={C.amber} />
             </div>
             <div style={{ fontSize: 13, fontWeight: 700, color: C.ink }}>
               Matched on {titleCase(String(g.match_reason || '').replace(/^match_/, ''))}
             </div>
-            <Badge color={C.amber} bg={C.amber + '14'}>{(g.patients || []).length} RECORDS</Badge>
+            <Badge color={C.amber} bg={alpha(C.amber, 8)}>{(g.patients || []).length} RECORDS</Badge>
           </div>
           {(g.patients || []).map((p) => (
             <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', padding: '9px 0', borderTop: `1px solid ${C.borderSoft}` }}>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
-import { C, FONT } from '@/src/theme/tokens.js';
+import { C, FONT, alpha } from '@/src/theme/tokens.js';
 import { td } from '@/src/components/ui/styles.js';
 import TableShell from '@/src/components/data/TableShell.jsx';
 import Badge from '@/src/components/ui/Badge.jsx';
@@ -50,7 +50,7 @@ const OPS = {
       <tr key={u.id} className="ava-row">
         <td style={td}><div style={{ fontWeight: 700, color: C.ink }}>{u.name}</div></td>
         <td style={td}>{u.email}</td>
-        <td style={td}><div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>{(u.roles || []).map((r) => <Badge key={r.id || r} color={C.violet} bg={C.violet + '14'}>{r.label || titleCase(r.name || r)}</Badge>)}</div></td>
+        <td style={td}><div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>{(u.roles || []).map((r) => <Badge key={r.id || r} color={C.violet} bg={alpha(C.violet, 8)}>{r.label || titleCase(r.name || r)}</Badge>)}</div></td>
         <td style={td}>{statusCell(u.status)}</td>
       </tr>
     ),
@@ -70,7 +70,7 @@ const OPS = {
     row: (o) => (
       <tr key={o.id} className="ava-row">
         <td style={td}><div style={{ fontWeight: 700, color: C.ink }}>{o.item || '—'}</div>{o.result_notes && <div style={{ fontSize: 11, color: C.ink3 }}>{o.result_notes}</div>}</td>
-        <td style={td}><Badge color={C.violet} bg={C.violet + '14'}>{upper(o.type)}</Badge></td>
+        <td style={td}><Badge color={C.violet} bg={alpha(C.violet, 8)}>{upper(o.type)}</Badge></td>
         <td style={td}>{patientName(o)}</td>
         <td style={td}>{o.priority ? `P${o.priority}` : '—'}</td>
         <td style={td}>{statusCell(o.status)}</td>
@@ -138,8 +138,8 @@ const OPS = {
         <td style={td}>{patientName(o) !== '—' ? patientName(o) : (o.admission?.patient?.full_name || '—')}</td>
         <td style={td}>{o.frequency || '—'}</td>
         <td style={td}>{o.is_verified
-          ? <Badge color={C.emerald} bg={C.emerald + '14'} dot>VERIFIED</Badge>
-          : <Badge color={C.ink3} bg={C.ink3 + '14'}>PENDING</Badge>}</td>
+          ? <Badge color={C.emerald} bg={alpha(C.emerald, 8)} dot>VERIFIED</Badge>
+          : <Badge color={C.ink3} bg={alpha(C.ink3, 8)}>PENDING</Badge>}</td>
         <td style={td}>{statusCell(o.status)}</td>
       </tr>
     ),
@@ -163,8 +163,8 @@ const OPS = {
         <td style={td}>{Array.isArray(r.permissions) ? r.permissions.length : '—'}</td>
         <td style={td}>{r.users_count ?? '—'}</td>
         <td style={td}>{r.is_system
-          ? <Badge color={C.violet} bg={C.violet + '14'}>SYSTEM</Badge>
-          : <Badge color={C.blue} bg={C.blue + '14'}>CUSTOM</Badge>}</td>
+          ? <Badge color={C.violet} bg={alpha(C.violet, 8)}>SYSTEM</Badge>
+          : <Badge color={C.blue} bg={alpha(C.blue, 8)}>CUSTOM</Badge>}</td>
       </tr>
     ),
   },
@@ -200,7 +200,7 @@ const OPS = {
     row: (l) => (
       <tr key={l.id} className="ava-row">
         <td style={td}><span style={{ fontFamily: FONT.mono, fontSize: 12 }}>{dateTime(l.created_at)}</span></td>
-        <td style={td}><Badge color={C.violet} bg={C.violet + '14'}>{upper(l.action)}</Badge></td>
+        <td style={td}><Badge color={C.violet} bg={alpha(C.violet, 8)}>{upper(l.action)}</Badge></td>
         <td style={td}>
           <div style={{ fontWeight: 700, color: C.ink }}>{l.actor?.name || 'System'}</div>
           {l.actor?.email && <div style={{ fontSize: 11, color: C.ink3 }}>{l.actor.email}</div>}
@@ -210,8 +210,8 @@ const OPS = {
           {l.description && <div style={{ fontSize: 11, color: C.ink3 }}>{l.description}</div>}
         </td>
         <td style={td}>{l.performed_by_platform
-          ? <Badge color={C.blue} bg={C.blue + '14'} dot>PLATFORM</Badge>
-          : <Badge color={C.ink3} bg={C.ink3 + '14'}>HOSPITAL</Badge>}</td>
+          ? <Badge color={C.blue} bg={alpha(C.blue, 8)} dot>PLATFORM</Badge>
+          : <Badge color={C.ink3} bg={alpha(C.ink3, 8)}>HOSPITAL</Badge>}</td>
       </tr>
     ),
   },
@@ -431,7 +431,7 @@ const OPS = {
           {b.error && <div style={{ fontSize: 11, color: C.red }}>{b.error}</div>}
         </td>
         <td style={td}>{b.node?.name || '—'}</td>
-        <td style={td}><Badge color={C.violet} bg={C.violet + '14'}>{upper(b.direction)}</Badge></td>
+        <td style={td}><Badge color={C.violet} bg={alpha(C.violet, 8)}>{upper(b.direction)}</Badge></td>
         <td style={td}>
           <span>{b.applied_count ?? 0}/{b.change_count ?? 0} applied</span>
           {(b.conflict_count > 0 || b.rejected_count > 0) && (
@@ -471,8 +471,8 @@ const OPS = {
         <td style={td}>{e.module === 'hmo' ? 'HMO' : titleCase(e.module)}</td>
         <td style={td}>{e.conflict_policy_label || titleCase(e.conflict_policy)}</td>
         <td style={td}>{e.accepts_push
-          ? <Badge color={C.emerald} bg={C.emerald + '14'} dot>ACCEPTS PUSH</Badge>
-          : <Badge color={C.ink3} bg={C.ink3 + '14'}>PULL ONLY</Badge>}
+          ? <Badge color={C.emerald} bg={alpha(C.emerald, 8)} dot>ACCEPTS PUSH</Badge>
+          : <Badge color={C.ink3} bg={alpha(C.ink3, 8)}>PULL ONLY</Badge>}
           {e.branch_scoped && <div style={{ fontSize: 11, color: C.ink3, marginTop: 3 }}>branch-scoped</div>}
         </td>
         <td style={td}>{Array.isArray(e.columns) ? e.columns.length : '—'}</td>
