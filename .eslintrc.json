@@ -40,6 +40,10 @@
       {
         "selector": "BinaryExpression[operator='+'][left.type!='Literal'][right.value=/^[0-9a-fA-F]{2}$/]",
         "message": "Do not append a hex alpha byte to a colour (any expression + '14'): design tokens are `var(--ava-*)` strings, so the result is not a colour and the tint never renders. Use alpha(color, pct) from theme/tokens.js (round 28)."
+      },
+      {
+        "selector": "TemplateLiteral > TemplateElement:not(:first-child)[value.raw=/^[0-9a-fA-F]{2}($|[;)])/]",
+        "message": "Do not append a hex alpha byte to a colour in a template literal (`${C.red}33`): design tokens are var() strings, so the result is not a colour. Use alpha(color, pct) (round 41)."
       }
     ],
     "no-undef": "error",
